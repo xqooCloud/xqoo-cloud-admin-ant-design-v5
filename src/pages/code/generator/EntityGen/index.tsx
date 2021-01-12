@@ -234,7 +234,7 @@ const EntityGen: React.FC<{}> = () => {
                               fieldKey={[field.fieldKey, 'javaFieldType']}
                               rules={[{ required: true, message: '请选择参数类型' }]}
                             >
-                              <Select placeholder="请选择参数类型" showSearch style={{width: '100%'}} disabled={generatorFinish}>
+                              <Select placeholder="请选择参数类型" showSearch style={{width: 120}} disabled={generatorFinish}>
                                 <Select.Option value="String">String</Select.Option>
                                 <Select.Option value="Date">Date</Select.Option>
                                 <Select.Option value="Boolean">Boolean</Select.Option>
@@ -320,7 +320,7 @@ const EntityGen: React.FC<{}> = () => {
                             type="primary"
                             shape="round"
                             loading={loading}
-                            onClick={() => {onFinish(entityGenForm.submit())}}>
+                            onClick={() => {entityGenForm.submit()}}>
                             重试
                           </Button>
                         }
