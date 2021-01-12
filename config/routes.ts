@@ -38,6 +38,8 @@
   { path: '/code/codeGenerator/microServiceGen', component: './code/generator/MicroServiceGen', access: 'routeFilter' }, // 生成微服务模块
   { path: '/code/codeGenerator/entityGen', component: './code/generator/EntityGen', access: 'routeFilter' }, // 生成实体bean
 
+  { path: '/email/emailConfig', component: './email/emailConfig', access: 'routeFilter' }, // 邮件参数配置
+
   {
     component: './404'
   },
