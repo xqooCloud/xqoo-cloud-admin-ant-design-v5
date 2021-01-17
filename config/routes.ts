@@ -17,6 +17,12 @@
    */
   { path: '/', redirect: '/welcome' }, // 默认跳转
   { path: '/welcome', component: './Welcome', access: 'routeFilter' }, // 首页
+
+  { path: '/thirdPay', component: './Welcome', access: 'routeFilter' }, // 支付管理
+  { path: '/thirdPay/payConfig', component: './thirdPay/PayConfig', access: 'routeFilter' }, // 支付参数管理
+  { path: '/thirdPay/payWaterFlow', component: './thirdPay/PayWaterFlow', access: 'routeFilter' }, // 支付参数管理
+  { path: '/thirdPay/refundWaterFlow', component: './thirdPay/RefundWaterFlow', access: 'routeFilter' }, // 支付参数管理
+
   { path: '/system', component: './Welcome', access: 'routeFilter' }, // 这条就是admin分组下的默认页面
   { path: '/system/menuInfo', component: './system/MenuManager', access: 'routeFilter' }, // 菜单管理页
   { path: '/system/roleInfo', component: './system/RoleManager', access: 'routeFilter' }, // 角色管理页

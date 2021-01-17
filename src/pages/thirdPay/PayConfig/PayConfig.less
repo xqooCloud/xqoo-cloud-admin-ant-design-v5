@@ -1,25 +1,46 @@
 @import '~antd/lib/style/themes/default.less';
 
 @shadow-properties: 2px 2px 5px #c1c1c1;
-.formDiv{
+
+.backGroundDiv{
   width: 100%;
-  height: 150px;
   padding: 20px;
   background-color: #fff;
   border-radius: 5px;
   box-shadow: @shadow-properties;
+  .payGroupDiv{
+    width: 100%;
+    height: 600px;
+    ul{
+      width: 100%;
+      height: 99%;
+      padding: 10px 1px 10px 1px;
+      list-style-type: none;
+      li{
+        width: 100%;
+        margin-top: 10px;
+        .payGroupIcon{
+          font-size: 30px;
+        }
+        .payGroupNameText{
+          font-size: 19px;
+        }
+      }
+    }
+  }
+  .payPropertiesDiv{
+    width: 100%;
+    height: 600px;
+  }
 }
-.colDiv{
-  width: 100%;
-  padding-top: 10px;
-  background-color: #fff;
-  border-radius: 5px;
-  box-shadow: @shadow-properties;
+.propertiesFormDiv{
+  min-height: 350px;
+  max-height: 580px;
 }
-.generatorCodeDiv{
-  width: 100%;
-  height: 480px;
-  padding: 20px;
+
+.hoverOnLi{
+  color: @primary-color;
+  box-shadow: 0 5px 15px #c1c1c1;
 }
 
 .divYScroll {
