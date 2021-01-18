@@ -249,7 +249,7 @@ export default (props: PayConfigPropertiesProps) => {
                           value={localProperties}
                           rowKey="id"
                           dateFormatter="string"
-                          scroll={{ y: 400 }}
+                          scroll={{ y: 380 }}
                         />
                       </div>
                   }

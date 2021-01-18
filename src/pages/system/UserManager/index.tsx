@@ -154,6 +154,30 @@ const SysUserManager: React.FC<{}> = () => {
       ),
     },
     {
+      title: '用户手机',
+      dataIndex: 'userPhone',
+      key: 'userPhone',
+      align: 'center',
+      ellipsis: true,
+      render: (userPhone: any) => (
+        <Tooltip overlay={undefined} placement="topLeft" title={userPhone ? userPhone : '未绑定手机'}>
+          {userPhone ? userPhone : '未绑定手机'}
+        </Tooltip>
+      ),
+    },
+    {
+      title: '用户邮箱',
+      dataIndex: 'userEmail',
+      key: 'userEmail',
+      align: 'center',
+      ellipsis: true,
+      render: (userEmail: any) => (
+        <Tooltip overlay={undefined} placement="topLeft" title={userEmail ? userEmail : '未绑定邮箱'}>
+          {userEmail ? userEmail : '未绑定邮箱'}
+        </Tooltip>
+      ),
+    },
+    {
       title: '用户名',
       dataIndex: 'userName',
       key: 'userName',
@@ -302,6 +326,14 @@ const SysUserManager: React.FC<{}> = () => {
               </Form.Item>
             </Col>
             <Col md={4} xs={0}/>
+            <Col md={5} xs={24}>
+              <Form.Item
+                label="用户手机"
+                name="userPhone">
+                <Input placeholder="用户手机" />
+              </Form.Item>
+            </Col>
+            <Col md={19} xs={0}/>
             <Col md={2} xs={8} style={{textAlign: 'left'}}>
               <Space size="large">
                 <Button type='primary' htmlType="submit" loading={loading}>查询</Button>
