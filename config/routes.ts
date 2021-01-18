@@ -40,6 +40,8 @@
 
   { path: '/email/emailConfig', component: './email/emailConfig', access: 'routeFilter' }, // 邮件参数配置
 
+  { path: '/affiliated/agreement', component: './affiliated/agreement', access: 'routeFilter' }, // 协议配置
+
   {
     component: './404'
   },
