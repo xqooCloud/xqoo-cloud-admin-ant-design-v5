@@ -203,7 +203,7 @@ const MicroServiceGen: React.FC<{}> = () => {
                   { required: true, min: 2, max: 64},
                   ({ getFieldValue }) => ({
                     validator(rule, value) {
-                      const pattern = /^[a-z]+[a-z\-]+[a-z]+$$/g;
+                      const pattern = /^[a-z]+[a-z\-]+[a-z]+$/g;
                       if (!value || pattern.test(value)) {
                         return Promise.resolve();
                       }

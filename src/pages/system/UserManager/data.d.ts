@@ -8,6 +8,8 @@ export interface SysUserDetail {
   userType?: SysUserTypeEnum;
   userTypeName?: string;
   userName?: string;
+  userPhone?: string;
+  userEmail?: string;
   lastLoginTime?: string;
   roleCount: number;
   checked: boolean;
@@ -26,13 +28,16 @@ export interface QueryListParam {
   pageSize: number;
   userName?: string;
   userStatus?: number;
-  userType?: number
+  userType?: number;
+  userPhone?: string;
 }
 
 export interface AddUserInfoParam {
   loginId: string;
   userName: string;
   userType: number;
+  userPhone?: string;
+  userEmail?: string;
   password: string;
   confirmPassword: string;
 }
