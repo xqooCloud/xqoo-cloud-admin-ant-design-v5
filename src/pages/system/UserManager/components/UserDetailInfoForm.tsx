@@ -82,8 +82,8 @@ const UserDetailInfoForm: React.FC<UserDetailInfoFormProps> = (props) => {
             { required: true, min: 4, max: 32},
             ({ getFieldValue }) => ({
               validator(rule, value) {
-                const pattern = new RegExp("[$%^&+=\\[\\]~！￥…*（）—{}【】‘；：”“’。，、？]")
-                if (!value || !pattern.test(value)) {
+                const pattern = /^[A-Za-z0-9_+@!.\-]+$/g;
+                if (value && pattern.test(value)) {
                   return Promise.resolve();
                 }
                 return Promise.reject('不可输入特殊字符');
@@ -120,6 +120,52 @@ const UserDetailInfoForm: React.FC<UserDetailInfoFormProps> = (props) => {
             <Select.Option value={88}>控制台用户</Select.Option>
             <Select.Option value={10}>web端用户</Select.Option>
           </Select>
+        </Form.Item>
+
+        <Form.Item
+          name="userPhone"
+          label='用户手机'
+          hasFeedback
+          tooltip={<Tooltip title=''>
+            用户的手机号，可选填
+          </Tooltip>}
+          rules={[
+            { min: 4, max: 16},
+            ({ getFieldValue }) => ({
+              validator(rule, value) {
+                const pattern = /^[0-9+]+[0-9\-]+[0-9]+$/g;
+                if (value && pattern.test(value)) {
+                  return Promise.resolve();
+                }
+                return Promise.reject('只能输入数字和 - ,开头和结尾不能为 -');
+              },
+            })
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name="userEmail"
+          label='用户邮箱'
+          hasFeedback
+          tooltip={<Tooltip title=''>
+            用户的邮箱，可选填
+          </Tooltip>}
+          rules={[
+            { min: 6, max: 32},
+            ({ getFieldValue }) => ({
+              validator(rule, value) {
+                const pattern = new RegExp("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$")
+                if (value && pattern.test(value)) {
+                  return Promise.resolve();
+                }
+                return Promise.reject('邮箱格式不合法');
+              },
+            })
+          ]}
+        >
+          <Input />
         </Form.Item>
 
         <Form.Item

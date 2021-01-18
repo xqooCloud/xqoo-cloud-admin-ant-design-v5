@@ -7,7 +7,7 @@ import {SaveOutlined} from "@ant-design/icons";
 import FormValueDiffOrigin from "@/utils/forms/FormValueDiffOrigin";
 import {assign as _assign} from 'lodash';
 import {RollbackOutlined} from "@ant-design/icons/lib";
-// import E from 'wangeditor';
+import E from 'wangeditor';
 
 
 export interface AgreementInfoDetailProps {
@@ -39,38 +39,48 @@ const AgreementInfoDetail: React.FC<AgreementInfoDetailProps> = (props) => {
   const [updateForm] = Form.useForm();
   const [hasChange, setHasChange] = useState<boolean>(false);
   const [isAdd, setIsAdd] = useState<boolean>(false);
-  //
-  // const elemMenu = ".editorElem-menu";
-  // const elemBody = ".editorElem-body";
-  // const editor = new E(elemMenu,elemBody);
-  // // 使用 onchange 函数监听内容的变化，并实时更新到 state 中
-  // editor.config.onchange = (html:any) => {
-  //   console.log(editor.txt.html())
-  // }
-  // editor.config.menus = [
-  //   'head',  // 标题
-  //   'bold',  // 粗体
-  //   'fontSize',  // 字号
-  //   'fontName',  // 字体
-  //   'italic',  // 斜体
-  //   'underline',  // 下划线
-  //   'strikeThrough',  // 删除线
-  //   'foreColor',  // 文字颜色
-  //   'backColor',  // 背景颜色
-  //   'link',  // 插入链接
-  //   'list',  // 列表
-  //   'justify',  // 对齐方式
-  //   'quote',  // 引用
-  //   'emoticon',  // 表情
-  //   'image',  // 插入图片
-  //   'table',  // 表格
-  //   'video',  // 插入视频
-  //   'code',  // 插入代码
-  //   'undo',  // 撤销
-  //   'redo'  // 重复
-  // ]
-  // editor.config.uploadImgShowBase64 = true
-  // editor.create()
+  const tmpEditor = new E('.editorElem-menu','.editorElem-body');
+  const [isCreate, setIsCreate] = useState<boolean>(false);
+
+  useEffect(() => {
+    if(showModal){
+      if(!isCreate){
+        tmpEditor.config.onchange = (html:any) => {
+          console.log(tmpEditor.txt.html())
+        }
+        tmpEditor.config.menus = [
+          'head',  // 标题
+          'bold',  // 粗体
+          'fontSize',  // 字号
+          'fontName',  // 字体
+          'italic',  // 斜体
+          'underline',  // 下划线
+          'strikeThrough',  // 删除线
+          'foreColor',  // 文字颜色
+          'backColor',  // 背景颜色
+          'link',  // 插入链接
+          'list',  // 列表
+          'justify',  // 对齐方式
+          'quote',  // 引用
+          'emoticon',  // 表情
+          // 'image',  // 插入图片
+          'table',  // 表格
+          // 'video',  // 插入视频
+          // 'code',  // 插入代码
+          'undo',  // 撤销
+          'redo'  // 重复
+        ];
+        tmpEditor.config.uploadImgShowBase64 = true;
+        setIsCreate(true);
+        tmpEditor.create();
+      }
+      if(agreementInfo){
+        tmpEditor.txt.html("<p>"+agreementInfo.agreementContent+"</p>");
+      }else{
+        tmpEditor.txt.html("<p></p>");
+      }
+    }
+  },[showModal]);
 
   const initFormInfoValue = () => {
     if(agreementInfo){
@@ -130,6 +140,7 @@ const AgreementInfoDetail: React.FC<AgreementInfoDetailProps> = (props) => {
       footer={footer || null}
       onCancel={() => {
         onCloseModal(false);
+        setIsCreate(false);
       }}
     >
       <div>
@@ -175,23 +186,22 @@ const AgreementInfoDetail: React.FC<AgreementInfoDetailProps> = (props) => {
             协议内容
           </Tooltip>}
         >
-          <Input />
         </Form.Item>
-        {/*<div className="text-area" >*/}
-        {/*  <div ref="editorElemMenu"*/}
-        {/*       style={{backgroundColor:'#f1f1f1',border:"1px solid #ccc"}}*/}
-        {/*       className="editorElem-menu">*/}
-        {/*  </div>*/}
-        {/*  /!* <div style={{padding: '5px 0', color: '#ccc'}}>中间隔离带</div> *!/*/}
-        {/*  <div*/}
-        {/*    style={{*/}
-        {/*      height:300,*/}
-        {/*      border:"1px solid #ccc",*/}
-        {/*      borderTop:"none"*/}
-        {/*    }}*/}
-        {/*    ref="editorElemBody" className="editorElem-body">*/}
-        {/*  </div>*/}
-        {/*</div>*/}
+        <div className="text-area" >
+          <div
+            style={{backgroundColor:'#f1f1f1',border:"1px solid #ccc"}}
+            className="editorElem-menu">
+          </div>
+          {/* <div style={{padding: '5px 0', color: '#ccc'}}>中间隔离带</div> */}
+          <div
+            style={{
+              height:300,
+              border:"1px solid #ccc",
+              borderTop:"none"
+            }}
+            className="editorElem-body">
+          </div>
+        </div>
         <Row style={{marginTop: '10px'}}>
           <Col md={7} xs={3}/>
           <Col md={3} xs={8} style={{textAlign: 'right'}}>

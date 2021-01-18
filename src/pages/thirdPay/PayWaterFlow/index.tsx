@@ -3,14 +3,14 @@ import {PageContainer} from "@ant-design/pro-layout";
 import {useModel} from "@@/plugin-model/useModel";
 import {Button, Col, Divider, Form, Input, Result, Row, Select, Space, Table} from "antd";
 import {DatePicker} from '@/components';
-import {QueryPayWaterFlow, PayWaterFlowEntity} from "@/pages/thirdPay/PayWaterFlow/data";
+import {PayWaterFlowEntity, QueryPayWaterFlow} from "@/pages/thirdPay/PayWaterFlow/data";
 import {assign as _assign, forIn as _forIn} from "lodash";
 import {PayPlatEnum} from "@/pages/thirdPay/PayConfig/enums";
 import {PayPlatName, payWaterColumns} from "@/pages/thirdPay/PayWaterFlow/modulesSupport";
 import * as dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn' // import locale
-import locale from 'antd/es/date-picker/locale/zh_CN';
 import styles from '@/pages/thirdPay/PayWaterFlow/PayWaterFlow.less';
+
 const { RangePicker } = DatePicker;
 // 这里需要单独设置下dayjs的语言环境
 dayjs.locale('zh-cn');
@@ -132,7 +132,6 @@ const PayWaterFlow:React.FC<{}> = () => {
               >
                 <RangePicker
                   showTime
-                  locale={locale}
                   ranges={{
                     '月初至今': [dayjs().startOf('month').startOf('day'), dayjs().endOf('day')],
                     '最近三周': [dayjs().subtract(3,'week').startOf('day'), dayjs().endOf('day')],
