@@ -1,6 +1,6 @@
 import {DataSourceInfo} from "@/pages/code/DataSource/data";
 import {useModel} from "@@/plugin-model/useModel";
-import {Button, Col, Form, Input, message, Modal, Row, Select, Space, Tooltip} from "antd";
+import {Button, Col, Form, Input, message, Modal, notification, Row, Select, Space, Tooltip} from "antd";
 import React, {ReactNode, useEffect, useState} from "react";
 import ValidateMessages from "@/utils/forms/ValidateMessages";
 import {SaveOutlined, LoadingOutlined, CheckCircleTwoTone, CloseCircleTwoTone} from "@ant-design/icons";
@@ -53,6 +53,16 @@ const DataSourceInfoDetail: React.FC<DataSourceInfoDetailProps> = (props) => {
     initFormInfoValue();
   }, [dataSourceInfo]);
 
+  const resetForm = () => {
+    if(dataSourceInfo){
+      updateForm.setFieldsValue(dataSourceInfo);
+      setIsAdd(false);
+    }else{
+      updateForm.resetFields();
+      setIsAdd(true);
+    }
+    setHasChange(false);
+  };
 
   // 表单字段变动
   const onValuesChange = (changedValues: any, allValues: any) => {
@@ -63,6 +73,13 @@ const DataSourceInfoDetail: React.FC<DataSourceInfoDetailProps> = (props) => {
     if(FormValueDiffOrigin(changedValues, allValues, dataSourceInfo)){
       setHasChange(false);
     }else{
+      notification.open({
+        type: 'warning',
+        description: '修改链接参数需要重新输入密码',
+        message: '提示信息',
+        key: 'changePassword'
+      });
+      updateForm.setFieldsValue({ dataBasePassword: '' });
       setHasChange(true);
     }
   };
@@ -317,8 +334,17 @@ const DataSourceInfoDetail: React.FC<DataSourceInfoDetailProps> = (props) => {
           <Col md={3} xs={8} offset={1} style={{textAlign: 'left'}}>
             <Button shape="round" type="default" loading={loading} onClick={() => {
               resetTestConnect();
+              resetForm();
               onCloseModal(false);
             }}>取消</Button>
+          </Col>
+          <Col md={3} xs={8} offset={1} style={{textAlign: 'left'}}>
+            {
+              hasChange ?
+                <Button shape="round" danger loading={loading} onClick={resetForm}>还原更改</Button>
+                :
+                null
+            }
           </Col>
         </Row>
       </Form>

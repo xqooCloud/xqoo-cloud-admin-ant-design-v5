@@ -9,7 +9,7 @@ import {
   CodeSandboxOutlined,
 } from '@ant-design/icons';
 import { Alert, Space, message, Tabs, Row, Col } from 'antd';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import ProForm, { ProFormCaptcha, ProFormText } from '@ant-design/pro-form';
 import { useIntl, Link, history, FormattedMessage, SelectLang, useModel } from 'umi';
 import Footer from '@/components/Footer';
@@ -24,7 +24,7 @@ import {
 import { setCacheCurrentUser } from '@/services/user';
 import { randomString } from '@/utils/utils';
 import { aesEncode } from '@/utils/aes/aesUtil';
-import moment from 'moment';
+import * as dayjs from 'dayjs';
 import { loopMenuItem } from '@/utils/route/menuHandleTool';
 import { getServerRoute } from '@/utils/route/serverRouteUtils';
 import styles from './index.less';
@@ -111,7 +111,7 @@ const Login: React.FC<{}> = () => {
     const passwordSecretObj: API.PasswordSecret = {};
     passwordSecretObj.password = valueIn.password;
     passwordSecretObj.randomStr = valueIn.randomStr;
-    passwordSecretObj.time = moment().valueOf();
+    passwordSecretObj.time = dayjs().valueOf();
     valueIn.password = encodeURIComponent(aesEncode(JSON.stringify(passwordSecretObj)));
     try {
       // 登录
@@ -143,7 +143,7 @@ const Login: React.FC<{}> = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.lang}>{SelectLang && <SelectLang />}</div>
+      <div className={styles.lang}>{SelectLang && <SelectLang key="selectLangLogin" />}</div>
       <div className={styles.content}>
         <div className={styles.top}>
           <div className={styles.header}>
@@ -178,6 +178,7 @@ const Login: React.FC<{}> = () => {
               },
             }}
             onFinish={async (values) => {
+              // @ts-ignore
               await handleSubmit(values);
             }}
           >

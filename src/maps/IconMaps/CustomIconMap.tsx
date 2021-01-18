@@ -69,7 +69,8 @@ import {
   IssuesCloseOutlined,
   StopOutlined,
   FundProjectionScreenOutlined,
-  CodeOutlined
+  CodeOutlined,
+  MoneyCollectOutlined
 } from "@ant-design/icons";
 
 export const IconModule = {
@@ -183,7 +184,8 @@ export const IconModule = {
         mapping: [
           'SmileOutlined',
           'FundProjectionScreenOutlined',
-          'CodeOutlined'
+          'CodeOutlined',
+          'MoneyCollectOutlined'
         ]
       }
     ],
@@ -321,6 +323,7 @@ export const CustomIconMap = {
   StopOutlined: <StopOutlined />,
   FundProjectionScreenOutlined: <FundProjectionScreenOutlined />,
   CodeOutlined: <CodeOutlined />,
+  MoneyCollectOutlined: <MoneyCollectOutlined />,
 
   PlusSquareFilled: <PlusSquareFilled />,
 
