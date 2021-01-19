@@ -1,14 +1,14 @@
 import {useModel} from "@@/plugin-model/useModel";
 import React, {useEffect, useState} from "react";
 import {ColumnsType} from "antd/es/table";
-import {Alert, Badge, Button, Col, Divider, Form, Input, Modal, Result, Row, Space, Table, Tooltip} from "antd";
+import {Alert, Button, Col, Divider, Form, Input, Modal, Result, Row, Space, Table, Tooltip} from "antd";
 import {PageContainer} from "@ant-design/pro-layout";
 import {assign as _assign} from "lodash";
-import {QueryFooterNavGroupInfo, FooterNavGroupInfo} from "@/pages/affiliated/FooterNav/data";
+import {QueryFooterNavDetailInfo, FooterNavDetailInfo} from "@/pages/affiliated/FooterNavInfo/data";
 import {FileAddOutlined} from "@ant-design/icons";
 import styles from "./index.less";
-import FooterNavGroup from "@/pages/affiliated/FooterNav/components/FooterNavGroup";
-import {history} from "@@/core/history";
+import {history} from 'umi';
+import FooterNavDetail from "@/pages/affiliated/FooterNavInfo/components/FooterNavDetail";
 
 const formItemLayout = {
   labelCol: {
@@ -23,9 +23,11 @@ const formItemLayout = {
   },
 };
 
-const FooterNavGroups: React.FC<{}> = () => {
+
+
+const FooterNavDetailInfos: React.FC<{}> = () => {
   const {
-    footerNavGroupInfoList,
+    footerNavDetailInfoList,
     totalElements,
     loading,
     hasError,
@@ -33,20 +35,39 @@ const FooterNavGroups: React.FC<{}> = () => {
     alertTipsShow,
     alertTipsMessage,
     alertTipsType,
-    getFooterNavGroupInfoFromServer,
-    deleteFooterNavGroupInfoToServer,
+    getFooterNavDetailInfoFromServer,
+    deleteFooterNavDetailInfoToServer,
     alertTipsHandle
-  } = useModel('affiliated.FooterNav.FooterNavGroupInfoModel');
+  } = useModel('affiliated.FooterNavInfo.FooterNavDetailInfoModel');
   const [queryForm] = Form.useForm();
-  const [queryParams, setQueryParams] = useState<QueryFooterNavGroupInfo>({page: 1, pageSize: 20});
+  const [queryParams, setQueryParams] = useState<QueryFooterNavDetailInfo>({page: 1,groupId:1, pageSize: 20});
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [checkFooterNavGroupInfo, setCheckFooterNavGroupInfo] = useState<FooterNavGroupInfo | undefined>(undefined);
+  const [groupIdParam, setGroupIdParam] = useState<number>(1);
+  const [groupNameParam, setGroupNameParam] = useState<string>("");
+  const [checkFooterNavDetailInfo, setCheckFooterNavDetailInfo] = useState<FooterNavDetailInfo | undefined>(undefined);
 
+
+  // 查询数据
   useEffect(() => {
-    getFooterNavGroupInfoFromServer(queryParams);
+    const pathHash = history.location;
+    const { query } = pathHash;
+    var groupId= query?.groupId
+    var groupName= query?.groupName
+    debugger
+    if (groupId) {
+      setGroupIdParam(Number(groupId))
+      setGroupNameParam(String(groupName))
+      queryParams.groupId=Number(groupId)
+    }
   }, []);
 
-  const columns: ColumnsType<FooterNavGroupInfo> = [
+
+  useEffect(() => {
+      queryParams.groupId=groupIdParam
+      getFooterNavDetailInfoFromServer(queryParams);
+  }, [groupIdParam]);
+
+  const columns: ColumnsType<FooterNavDetailInfo> = [
     {
       title: '记录id',
       dataIndex: 'id',
@@ -55,28 +76,33 @@ const FooterNavGroups: React.FC<{}> = () => {
       fixed: 'left',
     },
     {
-      title: '是否可以跳转',
-      dataIndex: 'needRedirect',
+      title: '展示文字',
+      dataIndex: 'labelText',
       align: 'center',
       ellipsis: true,
-      render: (text, row, index) => {
+      render: (labelText: any) => (
+        <Tooltip overlay={undefined} placement="topLeft" title={labelText}>
+          {labelText}
+        </Tooltip>
+      ),
+    },
+    {
+      title: '辅助说明',
+      dataIndex: 'labelTitle',
+      align: 'center',
+      ellipsis: true,
+      render: (labelTitle: any) => (
+        <Tooltip overlay={undefined} placement="topLeft" title={labelTitle}>
+          {labelTitle}
+        </Tooltip>
+      ),
+      /*render: (text, row, index) => {
         if (row.needRedirect) {
           return <Badge color='green' text='是'/>
         } else {
           return <Badge color='orange' text="否"/>
         }
-      }
-    },
-    {
-      title: '名称',
-      dataIndex: 'groupName',
-      align: 'center',
-      ellipsis: true,
-      render: (groupName: any) => (
-        <Tooltip overlay={undefined} placement="topLeft" title={groupName}>
-          {groupName}
-        </Tooltip>
-      ),
+      }*/
     },
     {
       title: '调转URL',
@@ -90,13 +116,24 @@ const FooterNavGroups: React.FC<{}> = () => {
       ),
     },
     {
-      title: '脚页提示',
-      dataIndex: 'groupTips',
+      title: '显示顺序',
+      dataIndex: 'sortNo',
       align: 'center',
       ellipsis: true,
-      render: (groupTips: any) => (
-        <Tooltip overlay={undefined} placement="topLeft" title={groupTips}>
-          {groupTips}
+      render: (sortNo: any) => (
+        <Tooltip overlay={undefined} placement="topLeft" title={sortNo}>
+          {sortNo}
+        </Tooltip>
+      ),
+    },
+    {
+      title: '图标名称',
+      dataIndex: 'iconName',
+      align: 'center',
+      ellipsis: true,
+      render: (iconName: any) => (
+        <Tooltip overlay={undefined} placement="topLeft" title={iconName}>
+          {iconName}
         </Tooltip>
       ),
     },
@@ -130,13 +167,11 @@ const FooterNavGroups: React.FC<{}> = () => {
       width: 180,
       render: (text, row, index) => (
         <Space size="small">
-          <a onClick={() => { history.push(`/affiliated/FooterNav/FooterNavInfo?groupId=${row.id}&groupName=${row.groupName}`) }}>详情</a>
-
           <a onClick={() => {
-            updateFooterNavGroup(row)
+            updateFooterNavDetail(row)
           }}>编辑</a>
           <a onClick={async () => {
-            deleteFooterNavGroup(row.id)
+            deleteFooterNavDetail(row.id)
           }}>删除</a>
         </Space>
       ),
@@ -145,7 +180,7 @@ const FooterNavGroups: React.FC<{}> = () => {
 
   // 查询表单提交
   const onFinish = (values: any) => {
-    getFooterNavGroupInfoFromServer(_assign(queryParams, values));
+    getFooterNavDetailInfoFromServer(_assign(queryParams, values));
   };
 
   const handleTableChange = (pagination: any, filters: any, sorter: any) => {
@@ -154,28 +189,30 @@ const FooterNavGroups: React.FC<{}> = () => {
       pageSize: pagination.pageSize
     };
     setQueryParams(pageNowInfo);
-    getFooterNavGroupInfoFromServer(_assign(pageNowInfo, queryForm.getFieldsValue()));
+    getFooterNavDetailInfoFromServer(_assign(pageNowInfo, queryForm.getFieldsValue()));
   };
 
-  const updateFooterNavGroup = (footerNavGroupInfo?: FooterNavGroupInfo) => {
-    if (footerNavGroupInfo) {
-      setCheckFooterNavGroupInfo(footerNavGroupInfo);
+  const updateFooterNavDetail = (footerNavDetailInfo?: FooterNavDetailInfo) => {
+    if (footerNavDetailInfo) {
+      footerNavDetailInfo.groupId=groupIdParam
+      footerNavDetailInfo.groupName=groupNameParam
+      setCheckFooterNavDetailInfo(footerNavDetailInfo);
     } else {
-      setCheckFooterNavGroupInfo(undefined);
+      setCheckFooterNavDetailInfo(undefined);
     }
     setShowModal(true);
   };
 
-  const deleteFooterNavGroup = async (id: number) => {
+  const deleteFooterNavDetail= async (id: number) => {
     Modal.confirm({
       okText: '确认',
       cancelText: '取消',
       title: '确定操作',
       content: '是否确认删除数据？',
       onOk: () => {
-        deleteFooterNavGroupInfoToServer(id).then(res => {
+        deleteFooterNavDetailInfoToServer(id).then(res => {
           if (res) {
-            getFooterNavGroupInfoFromServer(_assign(queryParams, queryForm.getFieldsValue()))
+            getFooterNavDetailInfoFromServer(_assign(queryParams, queryForm.getFieldsValue()))
           }
         }).catch(e => {
           console.error('[delete dataSource error!]', e)
@@ -187,7 +224,7 @@ const FooterNavGroups: React.FC<{}> = () => {
   const closeModal = (result: boolean) => {
     setShowModal(false);
     if (result) {
-      getFooterNavGroupInfoFromServer(_assign(queryParams, queryForm.getFieldsValue()))
+      getFooterNavDetailInfoFromServer(_assign(queryParams, queryForm.getFieldsValue()))
     }
   };
 
@@ -203,8 +240,8 @@ const FooterNavGroups: React.FC<{}> = () => {
           <Row justify="space-around" align="middle">
             <Col md={5} xs={24}>
               <Form.Item
-                label="脚页分组名称"
-                name="groupName">
+                label="脚页名称"
+                name="labelTitle">
 
                 <Input placeholder="请输入脚页分组名称，支持右模糊查询"/>
               </Form.Item>
@@ -254,8 +291,8 @@ const FooterNavGroups: React.FC<{}> = () => {
       </div>
       <div className={styles.tableDiv}>
         <Button type="primary" loading={loading} icon={<FileAddOutlined/>} onClick={() => {
-          updateFooterNavGroup()
-        }}>新增分组 </Button>
+          updateFooterNavDetail()
+        }}>新增脚页 </Button>
         <Divider/>
         {
           hasError ?
@@ -265,11 +302,11 @@ const FooterNavGroups: React.FC<{}> = () => {
               subTitle={errorMessage}
             />
             :
-            <Table<FooterNavGroupInfo>
+            <Table<FooterNavDetailInfo>
               size="small"
               columns={columns}
               rowKey={record => record.id}
-              dataSource={footerNavGroupInfoList}
+              dataSource={footerNavDetailInfoList}
               pagination={{
                 size: 'small',
                 total: totalElements,
@@ -288,10 +325,10 @@ const FooterNavGroups: React.FC<{}> = () => {
             />
         }
       </div>
-      <FooterNavGroup footerNavGroupInfo={checkFooterNavGroupInfo} onCloseModal={closeModal} showModal={showModal}
-                      maskClosable={false}/>
+      <FooterNavDetail footerNavDetailInfo={checkFooterNavDetailInfo} groupId={groupIdParam} groupName={groupNameParam} onCloseModal={closeModal} showModal={showModal}
+                       maskClosable={false}/>
     </PageContainer>
   );
 };
 
-export default FooterNavGroups;
+export default FooterNavDetailInfos;

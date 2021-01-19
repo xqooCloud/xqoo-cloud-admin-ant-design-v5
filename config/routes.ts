@@ -73,7 +73,7 @@
 
   { path: '/affiliated/agreement', component: './affiliated/agreement', access: 'routeFilter' }, // 协议配置
    { path: '/affiliated/FooterNav', component: './affiliated/FooterNav', access: 'routeFilter' }, // 脚页配置
-   { path: '/affiliated/FooterNavInfo', component: './affiliated/FooterNavInfo', access: 'routeFilter' }, // 脚页分组详情配置
+   { path: '/affiliated/FooterNav/FooterNavInfo', component: './affiliated/FooterNavInfo', access: 'routeFilter' }, // 脚页分组详情配置
 
   {
     component: './404',
