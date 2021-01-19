@@ -58,6 +58,8 @@ const UpdateGatewayRoute: React.FC<{}> = () => {
   const [filterTipsMap, setFilterTipsMap] = useState<object>({});
   const [propertiesMap, setPropertiesMap] = useState<{ keyValue: string, value: string, type: string; parentIndex: any, handleType: 'predicate'|'filter'}>();
   const [showProperties, setShowProperties] = useState<boolean>(false);
+  const [generatorPredicatesOptionItem, setGeneratorPredicatesOptionItem] = useState<ReactNodeArray>([]);
+  const [generatorFiltersOptionItem, setGeneratorFiltersOptionItem] = useState<ReactNodeArray>([]);
 
   const pathHash = history.location;
   // 初始化地址栏参数查询
@@ -112,6 +114,7 @@ const UpdateGatewayRoute: React.FC<{}> = () => {
         tmpObj[item.predicatesName] = item.predicatesTips;
       });
       setPredicateTipsMap(tmpObj);
+      generatorPredicateOption();
     }
   }, [gatewayPredicatesList]);
 
@@ -122,6 +125,7 @@ const UpdateGatewayRoute: React.FC<{}> = () => {
         tmpObj[item.filtersName] = item.filtersTips;
       });
       setFilterTipsMap(tmpObj);
+      generatorFiltersOption();
     }
   }, [gatewayFiltersList]);
 
@@ -214,14 +218,14 @@ const UpdateGatewayRoute: React.FC<{}> = () => {
   };
 
   // 生成断言配置选项
-  const generatorPredicateOption = (): ReactNodeArray => {
+  const generatorPredicateOption = (): void => {
     const arr: ReactNodeArray = [];
     gatewayPredicatesList.forEach((item, index) => {
       arr.push(
         <Select.Option key={index} value={item.predicatesName}>{item.predicatesName}</Select.Option>
       );
     });
-    return arr;
+    setGeneratorPredicatesOptionItem(arr);
   };
 
   // 新增断言器配置
@@ -316,12 +320,29 @@ const UpdateGatewayRoute: React.FC<{}> = () => {
     _forIn(obj, (value, key) => {
       arr.push(
         <li key={parentIndex + '_' + i} className={styles.propertiesLi}>
-          <Space>
-            <span>参数key:&nbsp;&nbsp;{key}</span>
-            <span>参数值:&nbsp;&nbsp;{value}</span>
-            <Button type="primary" shape="circle" icon={<EditOutlined />} size='small' onClick={() => {updatePredicateProperties(parentIndex, {key, value}, parentName)}} />
-            <Button type="primary" danger shape="circle" icon={<MinusOutlined />} size='small' onClick={() => {removePredicateProperties(key, parentIndex)}} />
-          </Space>
+          <Row justify="space-around" align="middle">
+            <Col md={9} xs={24}>
+              <div className={styles.ellipsis}>
+                <Tooltip overlay={undefined} title={`参数key:${key}`}>
+                  参数key:&nbsp;&nbsp;
+                  {key}
+                </Tooltip>
+              </div>
+            </Col>
+            <Col md={11} xs={24}>
+              <div className={styles.ellipsis}>
+                <Tooltip overlay={undefined} title={`参数值:${value}`}>
+                  参数值:&nbsp;&nbsp;{value}
+                </Tooltip>
+              </div>
+            </Col>
+            <Col md={3} xs={24}>
+              <Space>
+                <Button type="primary" shape="circle" icon={<EditOutlined />} size='small' onClick={() => {updatePredicateProperties(parentIndex, {key, value}, parentName)}} />
+                <Button type="primary" danger shape="circle" icon={<MinusOutlined />} size='small' onClick={() => {removePredicateProperties(key, parentIndex)}} />
+              </Space>
+            </Col>
+          </Row>
         </li>
       );
       i ++;
@@ -350,20 +371,24 @@ const UpdateGatewayRoute: React.FC<{}> = () => {
                 </Tooltip>
                 <Select showSearch value={item.name} placeholder="请选择断言配置" style={{width: 130}} onChange={(value) => {changePredicate(index, value)}}>
                   {
-                    generatorPredicateOption()
+                    generatorPredicatesOptionItem
                   }
                 </Select>
               </Space>
             </Col>
             <Col span={14}>
-              <Space>
-                <Button type="default" shape="circle" title="增加参数" icon={<PlusOutlined />} size='small' onClick={() => {addPredicateProperties(index, item)}} />
-                <ul className={styles.propertiesUl}>
-                  {
-                    generatorPredicateProperties(index, item.args, item.name)
-                  }
-                </ul>
-              </Space>
+              <Row justify="space-around" align="middle">
+                <Col md={1} xs={3}>
+                  <Button type="default" shape="circle" title="增加参数" icon={<PlusOutlined />} size='small' onClick={() => {addPredicateProperties(index, item)}} />
+                </Col>
+                <Col md={23} xs={21}>
+                  <ul className={styles.propertiesUl}>
+                    {
+                      generatorPredicateProperties(index, item.args, item.name)
+                    }
+                  </ul>
+                </Col>
+              </Row>
             </Col>
           </Row>
         </li>
@@ -373,14 +398,14 @@ const UpdateGatewayRoute: React.FC<{}> = () => {
   };
 
   // 生成过滤器配置选项
-  const generatorFiltersOption = (): ReactNodeArray => {
+  const generatorFiltersOption = (): void => {
     const arr: ReactNodeArray = [];
     gatewayFiltersList.forEach((item, index) => {
       arr.push(
         <Select.Option key={index} value={item.filtersName}>{item.filtersName}</Select.Option>
       );
     });
-    return arr;
+    setGeneratorFiltersOptionItem(arr);
   };
 
   // 新增过滤器配置
@@ -410,6 +435,7 @@ const UpdateGatewayRoute: React.FC<{}> = () => {
 
   // 增加过滤器参数
   const addFilterProperties = (filterIndex: number, filterProperties: any): void => {
+    console.log(gatewayFiltersList, filterProperties);
     const obj = _find(gatewayFiltersList, (item) => {return item.filtersName === filterProperties.name});
     if(!obj){
       message.warning('未找到相应参数配置，请刷新重试');
@@ -475,12 +501,29 @@ const UpdateGatewayRoute: React.FC<{}> = () => {
     _forIn(obj, (value, key) => {
       arr.push(
         <li key={parentIndex + '_' + i} className={styles.propertiesLi}>
-          <Space>
-            <span>参数key:&nbsp;&nbsp;{key}</span>
-            <span>参数值:&nbsp;&nbsp;{value}</span>
-            <Button type="primary" shape="circle" icon={<EditOutlined />} size='small' onClick={() => {updateFilterProperties(parentIndex, {key, value}, parentName)}} />
-            <Button type="primary" danger shape="circle" icon={<MinusOutlined />} size='small' onClick={() => {removeFilterProperties(key, parentIndex)}} />
-          </Space>
+          <Row justify="space-around" align="middle">
+            <Col md={9} xs={24}>
+              <div className={styles.ellipsis}>
+                <Tooltip overlay={undefined} title={`参数key:${key}`}>
+                  参数key:&nbsp;&nbsp;
+                  {key}
+                </Tooltip>
+              </div>
+            </Col>
+            <Col md={11} xs={24}>
+              <div className={styles.ellipsis}>
+                <Tooltip overlay={undefined} title={`参数值:${value}`}>
+                  参数值:&nbsp;&nbsp;{value}
+                </Tooltip>
+              </div>
+            </Col>
+            <Col md={3} xs={24}>
+              <Space>
+                <Button type="primary" shape="circle" icon={<EditOutlined />} size='small' onClick={() => {updateFilterProperties(parentIndex, {key, value}, parentName)}} />
+                <Button type="primary" danger shape="circle" icon={<MinusOutlined />} size='small' onClick={() => {removeFilterProperties(key, parentIndex)}} />
+              </Space>
+            </Col>
+          </Row>
         </li>
       );
       i ++;
@@ -509,20 +552,24 @@ const UpdateGatewayRoute: React.FC<{}> = () => {
                 </Tooltip>
                 <Select showSearch value={item.name} placeholder="请选择过滤配置" style={{width: 130}} onChange={(value) => {changeFilter(index, value)}}>
                   {
-                    generatorFiltersOption()
+                    generatorFiltersOptionItem
                   }
                 </Select>
               </Space>
             </Col>
             <Col span={14}>
-              <Space>
-                <Button type="default" shape="circle" title="增加参数" icon={<PlusOutlined />} size='small' onClick={() => {addFilterProperties(index, item)}} />
-                <ul className={styles.propertiesUl}>
-                  {
-                    generatorFilterProperties(index, item.args, item.name)
-                  }
-                </ul>
-              </Space>
+              <Row justify="space-around" align="middle">
+                <Col md={1} xs={3}>
+                  <Button type="default" shape="circle" title="增加参数" icon={<PlusOutlined />} size='small' onClick={() => {addFilterProperties(index, item)}} />
+                </Col>
+                <Col md={23} xs={21}>
+                  <ul className={styles.propertiesUl}>
+                    {
+                      generatorFilterProperties(index, item.args, item.name)
+                    }
+                  </ul>
+                </Col>
+              </Row>
             </Col>
           </Row>
         </li>
@@ -536,8 +583,8 @@ const UpdateGatewayRoute: React.FC<{}> = () => {
   };
 
   const submitPropertiesModal = (result: { keyValue: string, value: string, parentIndex: any, handleType: 'predicate'|'filter'}) => {
+    const arr: any[] = [];
     if(result.handleType === 'predicate'){
-      const arr: any[] = [];
       localPredicateConfig.forEach((item, index) => {
         if(index === result.parentIndex){
           let tmpObj = {};
@@ -547,6 +594,17 @@ const UpdateGatewayRoute: React.FC<{}> = () => {
         arr.push(item);
       });
       setLocalPredicateConfig(arr);
+    }
+    if(result.handleType === 'filter'){
+      localFilterConfig.forEach((item, index) => {
+        if(index === result.parentIndex){
+          let tmpObj = {};
+          tmpObj[result.keyValue] = result.value;
+          item.args = _assign({}, item.args, tmpObj);
+        }
+        arr.push(item);
+      });
+      setLocalFilterConfig(arr);
     }
     setShowProperties(false);
   };
