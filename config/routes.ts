@@ -74,7 +74,10 @@
 
   { path: '/affiliated/agreement', component: './affiliated/agreement', access: 'routeFilter' }, // 协议配置
    { path: '/affiliated/FooterNav', component: './affiliated/FooterNav', access: 'routeFilter' }, // 脚页配置
-   { path: '/affiliated/FooterNav/FooterNavInfo', component: './affiliated/FooterNavInfo', access: 'routeFilter' }, // 脚页分组详情配置
+   // { path: '/affiliated/FooterNav/FooterNavInfo', component: './affiliated/FooterNavInfo', access: 'routeFilter' }, // 脚页分组详情配置
+
+  { path: '/fileManager', component: './Welcome', access: 'routeFilter' }, // 文件管理
+  { path: '/fileManager/fileConfig', component: './fileManager/FileConfig', access: 'routeFilter' }, // 文件模块参数管理
 
   {
     component: './404',

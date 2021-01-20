@@ -61,7 +61,6 @@ const PayConfig:React.FC<{}> = () => {
     if(checkGroupId === checkedGroupId){
       return;
     }
-    console.log(checkGroupId);
     setCheckedGroupId(checkGroupId);
     setCheckedGroupVersion(checkGroupVersion);
     setCheckedGroupPlatName(checkGroupPlayName);

@@ -1,51 +1,59 @@
 import {useModel} from "@@/plugin-model/useModel";
 import React, {useEffect, useRef, useState} from "react";
-import {Alert, Button, Divider, Result} from "antd";
+import {Alert, Button, Divider, Modal, Result, Space} from "antd";
 import ProSkeleton from "@ant-design/pro-skeleton";
 import {ActionType, EditableProTable, ProColumns} from '@ant-design/pro-table';
-import {PayConfigProperties} from "@/pages/thirdPay/PayConfig/data";
 import {find as _find, assign as _assign} from 'lodash';
-import {CloudUploadOutlined} from "@ant-design/icons";
-import styles from "@/pages/thirdPay/PayConfig/PayConfig.less";
+import {CloudServerOutlined, CloudUploadOutlined} from "@ant-design/icons";
+import {FileConfigProperties} from "@/pages/fileManager/FileConfig/data";
+import {Prism} from "react-syntax-highlighter";
+import {duotoneDark} from "react-syntax-highlighter/dist/esm/styles/prism";
+import {getNowServerConfigProperties} from "@/pages/fileManager/FileConfig/service";
+import {ResultStatusType} from "antd/lib/result";
+import styles from "@/pages/fileManager/FileConfig/FileConfig.less";
 
-export interface PayConfigPropertiesProps{
-  parentPayGroupId: number;
-  parentPayGroupVersion: number;
-  parentPayGroupName: string;
+export interface FileConfigPropertiesProps {
+  parentConfigId: number;
+  parentConfigType: string;
+  parentConfigName: string;
   refreshCommand: string;
 }
 
-export default (props: PayConfigPropertiesProps) => {
+export default (props: FileConfigPropertiesProps) => {
   const actionRef = useRef<ActionType>();
-  const {parentPayGroupId, parentPayGroupVersion, parentPayGroupName, refreshCommand} = props;
-  const {payConfigProperties, loading, handleLoading, hasError, errorMessage, alertTipsShow, alertTipsMessage,
-    alertTipsType, getPayConfigProperties, updateConfigPropertiesToServer, refreshConfigToServer, alertTipsHandle} = useModel('thirdPay.PayConfig.PayConfigPropertiesModel');
-  const [localProperties, setLocalProperties] = useState<PayConfigProperties[]>([]);
+  const {parentConfigId, parentConfigType, parentConfigName, refreshCommand} = props;
+  const {fileConfigProperties, loading, handleLoading, hasError, errorMessage, alertTipsShow, alertTipsMessage,
+    alertTipsType, getAllPropertiesByParentIdFromServer, updateConfigPropertiesToServer, refreshConfigToServer, alertTipsHandle} = useModel('fileManager.FileConfig.FileConfigPropertiesModel');
+  const [localProperties, setLocalProperties] = useState<FileConfigProperties[]>([]);
+  const [showServerData, setShowServerData] = useState<boolean>(false);
+  const [serverData, setServerData] = useState<string>('');
+  const [viewPropertiesType, setViewPropertiesType] = useState<ResultStatusType>('info');
+  const [viewPropertiesTitle, setViewPropertiesTitle] = useState<string>('无数据');
+  const [viewPropertiesMessage, setViewPropertiesMessage] = useState<string>('没有找到相关的缓存数据');
 
   const getConfigProperties = () => {
-    getPayConfigProperties({parentId: parentPayGroupId, parentVersion: parentPayGroupVersion});
+    getAllPropertiesByParentIdFromServer(parentConfigId);
   };
 
   useEffect(() => {
-    if(parentPayGroupId && parentPayGroupVersion){
+    if(parentConfigId){
       getConfigProperties();
     }
-  }, [parentPayGroupId]);
+  }, [parentConfigId]);
 
   useEffect(() => {
-    if(payConfigProperties.length > 0){
-      setLocalProperties(payConfigProperties);
+    if(fileConfigProperties.length > 0){
+      setLocalProperties(fileConfigProperties);
     }else{
       setLocalProperties([]);
     }
-  }, [payConfigProperties]);
+  }, [fileConfigProperties]);
 
-
-  const getNewRecord = (): PayConfigProperties => {
-    return {id: Math.ceil(Math.random() * 1000) * - 1 , parentId: parentPayGroupId, parentVersion: parentPayGroupVersion, propertiesLabel: "", propertiesRemark: "", propertiesValue: ""}
+  const getNewRecord = (): FileConfigProperties => {
+    return {id: Math.ceil(Math.random() * 1000) * - 1 , parentId: parentConfigId, propertiesLabel: "", propertiesRemark: "", propertiesValue: ""}
   };
 
-  const columns: ProColumns<PayConfigProperties>[] = [
+  const columns: ProColumns<FileConfigProperties>[] = [
     {
       dataIndex: 'id',
       valueType: 'indexBorder',
@@ -60,6 +68,8 @@ export default (props: PayConfigPropertiesProps) => {
         rules: [
           {
             required: true,
+            max: 32,
+            min: 2,
             message: '此项为必填项',
           },
         ],
@@ -74,6 +84,8 @@ export default (props: PayConfigPropertiesProps) => {
         rules: [
           {
             required: true,
+            max: 512,
+            min: 2,
             message: '此项为必填项',
           },
         ],
@@ -110,12 +122,32 @@ export default (props: PayConfigPropertiesProps) => {
     },
   ];
 
+  const showNowServerData = (configType: string) => {
+    getNowServerConfigProperties(configType).then(res => {
+      setShowServerData(true);
+      if(res.code === 200){
+        setServerData(JSON.stringify(res.data, undefined, 2));
+        setViewPropertiesType('info');
+        setViewPropertiesTitle('无数据');
+        setViewPropertiesMessage(`没有【${parentConfigName}】配置相关的缓存数据，请先发布配置参数`);
+      }else{
+        setViewPropertiesType('warning');
+        setViewPropertiesTitle('获取数据出错');
+        setViewPropertiesMessage(res.message);
+      }
+    }).catch(e => {
+      setViewPropertiesType('error');
+      setViewPropertiesTitle('获取数据出错');
+      setViewPropertiesMessage(`获取服务器中【${parentConfigName}】配置的缓存数据发生错误，请稍后再试`);
+    });
+  };
+
   return (
     <div className={styles.backGroundDiv}>
       <Divider orientation="left">
         {
-          parentPayGroupName ?
-            <span>【{parentPayGroupName}】参数</span>
+          parentConfigName ?
+            <span>【{parentConfigName}】参数</span>
             :
             '请先选择平台'
         }
@@ -135,7 +167,7 @@ export default (props: PayConfigPropertiesProps) => {
         }
       </div>
       {
-        parentPayGroupId ?
+        parentConfigId ?
           <>
             {
               hasError ?
@@ -162,17 +194,29 @@ export default (props: PayConfigPropertiesProps) => {
                       :
                       <div>
                         <div style={{ padding: '20px'}}>
-                          <Button
-                            type="primary"
-                            loading={handleLoading}
-                            disabled={localProperties.length < 1}
-                            icon={<CloudUploadOutlined />}
-                            onClick={async () => {await refreshConfigToServer(refreshCommand)}}
-                          >
-                            发布参数
-                          </Button>
+                          <Space>
+                            <Button
+                              type="primary"
+                              loading={handleLoading}
+                              disabled={localProperties.length < 1}
+                              icon={<CloudUploadOutlined />}
+                              onClick={async () => {await refreshConfigToServer(refreshCommand)}}
+                            >
+                              发布参数
+                            </Button>
+                            <Button
+                              type="primary"
+                              danger
+                              loading={handleLoading}
+                              disabled={localProperties.length < 1}
+                              icon={<CloudServerOutlined />}
+                              onClick={() => {showNowServerData(parentConfigType)}}
+                            >
+                              查看缓存
+                            </Button>
+                          </Space>
                         </div>
-                        <EditableProTable<PayConfigProperties>
+                        <EditableProTable<FileConfigProperties>
                           columns={columns}
                           actionRef={actionRef}
                           loading={handleLoading}
@@ -190,7 +234,7 @@ export default (props: PayConfigPropertiesProps) => {
                                 key="save"
                                 loading={handleLoading}
                                 onClick={async () => {
-                                  const values = (await config?.form?.validateFields()) as PayConfigProperties;
+                                  const values = (await config?.form?.validateFields()) as FileConfigPropertiesProps;
                                   const obj = _assign({}, row, values[row.id]);
                                   await config?.onSave?.(config.recordKey, obj);
                                 }}
@@ -209,11 +253,11 @@ export default (props: PayConfigPropertiesProps) => {
                               </Button>,
                             ],
                             onSave: async (addId, addValue) => {
-                              const rtnData: PayConfigProperties|undefined = await updateConfigPropertiesToServer(addValue);
+                              const rtnData: FileConfigProperties|undefined = await updateConfigPropertiesToServer(addValue);
                               return new Promise((resolve) => {
                                 if(rtnData){
                                   const obj = _find(localProperties, (item) => {return item.id === rtnData.id});
-                                  const arr: PayConfigProperties[] = [];
+                                  const arr: FileConfigProperties[] = [];
                                   if(!obj){
                                     arr.push(rtnData);
                                     setLocalProperties(arr.concat(localProperties));
@@ -266,6 +310,41 @@ export default (props: PayConfigPropertiesProps) => {
             />
           </div>
       }
+
+      <Modal
+        width={800}
+        bodyStyle={{ padding: '32px 40px 48px'}}
+        destroyOnClose
+        title="当前服务器缓存数据"
+        visible={showServerData}
+        footer={null}
+        maskClosable={false}
+        onCancel={() => {
+          setShowServerData(false);
+        }}
+      >
+        <div className={[`${styles.jsonDiv}`, `${styles.divYScroll}`, `${styles.divOverFlowYScroll}`].join(' ')}>
+          {
+            (serverData && serverData !== '{}') ?
+              <Prism
+                showLineNumbers
+                startingLineNumber={1}
+                language="json"
+                wrapLines
+                style={duotoneDark}
+              >
+                {serverData}
+              </Prism>
+              :
+              <Result
+                status={viewPropertiesType}
+                title={viewPropertiesTitle}
+                subTitle={viewPropertiesMessage}
+              />
+          }
+
+        </div>
+      </Modal>
     </div>
   );
 }
