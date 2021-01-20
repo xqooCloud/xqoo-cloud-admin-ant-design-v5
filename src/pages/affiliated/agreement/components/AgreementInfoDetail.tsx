@@ -128,7 +128,7 @@ const AgreementInfoDetail: React.FC<AgreementInfoDetailProps> = (props) => {
       content: '是否确认提交数据？',
       onOk: async () => {
         const obj: AgreementInfo = _assign({}, agreementInfo, values);
-        obj.agreementContent = editor.txt.html();
+        obj.agreementContent = editor.txt.html() + "";
         const success = await updateAgreementToServer(obj);
         if (success) {
           updateForm.resetFields();
