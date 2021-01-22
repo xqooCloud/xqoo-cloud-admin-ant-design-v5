@@ -9,6 +9,13 @@ export async function getUploadSign(params: GetUploadSignParam) {
   });
 }
 
+export async function removeFileToServer(params: { bucketName: string, fileKey: string }) {
+  return request<ResponseData<SignBodyServer>>(`/api/fileHandle/aliOssHandle/removeFile`, {
+    method: 'GET',
+    params
+  });
+}
+
 export async function doUploadFile(url: string, data: any){
   return request<any>(url, {
     method: 'POST',

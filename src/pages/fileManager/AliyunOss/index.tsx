@@ -4,9 +4,14 @@ import ImageUpload from "@/pages/fileManager/components/ImageUpload";
 
 const AliyunOss: React.FC<{}> = () => {
 
+  const uploaded = (arr: any[]) => {
+    console.log(arr);
+  };
+
   return (
     <PageContainer fixedHeader>
-      <ImageUpload maxImageNumber={1} />
+      <ImageUpload maxImageNumber={2} tempFile uploadedCallback={uploaded}/>
+      <img src="https://xqoo-public.oss-cn-shanghai.aliyuncs.com/img/20210122/school-project.jpg" />
     </PageContainer>
   );
 };
