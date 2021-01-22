@@ -6,7 +6,7 @@ const AliyunOss: React.FC<{}> = () => {
 
   return (
     <PageContainer fixedHeader>
-      <ImageUpload />
+      <ImageUpload maxImageNumber={1} />
     </PageContainer>
   );
 };

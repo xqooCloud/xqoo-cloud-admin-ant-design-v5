@@ -23,6 +23,7 @@ export const initialStateConfig = {
 history.listen(async (location: any) => {
   const currentUser = await getCacheCurrentUser();
   if (currentUser?.token && location.pathname === '/auth/login') {
+    // @ts-ignore
     history.push(-1);
   }
   if (!currentUser?.token && location.pathname !== '/auth/login') {
@@ -59,6 +60,7 @@ export async function getInitialState(): Promise<{
     const currentUser = await fetchUserInfo();
     if (currentUser) {
       const { query, pathname } = history.location;
+      // @ts-ignore
       const { redirect } = query;
       if (pathname === '/auth/login') {
         if (redirect) {
@@ -103,7 +105,7 @@ export const layout = ({ initialState }: {
     disableContentMargin: false,
     footerRender: () => <Footer />,
     onPageChange: () => {
-      const { location } = history;
+      // const { location } = history;
       // 如果没有登录，重定向到 login
       // if (!initialState?.currentUser && location.pathname !== '/auth/login') {
       //   history.push('/auth/login');
@@ -193,6 +195,7 @@ const redirectLoginPage = () => {
   removeCacheCurrentUser('current').then(() => {
     hide();
     const { query, pathname } = history.location;
+    // @ts-ignore
     const { redirect } = query;
     // Note: There may be security issues, please note
     if (pathname !== '/auth/login' && !redirect) {
