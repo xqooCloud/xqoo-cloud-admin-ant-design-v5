@@ -9,11 +9,12 @@ export interface ImageUploadProps {
   singlePicSize?: number;
   tempFile?: boolean;
   cacheExpire?: number;
+  accessType: 'public'|'protected',
   uploadedCallback: (fileArr: any[]) => void;
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = (props) => {
-  const {maxImageNumber, singlePicSize, tempFile, cacheExpire, uploadedCallback} = props;
+  const {maxImageNumber, singlePicSize, tempFile, cacheExpire, accessType, uploadedCallback} = props;
   const [fileList, setFileList] = useState<any[]>([]);
   const [callbackArr, setCallbackArr] = useState<any[]>([]);
   const [actionHost, setActionHost] = useState<string>('');
@@ -40,7 +41,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
   };
 
   const onRemove = (file: any) => {
-    removeFileToServer({ bucketName: file.bucketName, fileKey: file.fileObjectKey }).then(res => {
+    removeFileToServer({ bucketName: file.bucketName, fileKey: file.fileObjectKey, fileId: file.fileId }).then(res => {
       if(res.code === 200){
       }else{
         console.warn('file remove error,please confirm')
@@ -71,8 +72,13 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
       return false;
     }
     const tmpData = {
+      'x:access_type': accessType,
+      'x:file_part_type': 'ALL',
+      'x:file_part_no': '1',
+      'x:file_part_last': 'YES',
       'x:cache_var': encodeURIComponent('max-age=' + (cacheExpire || 604800)),
       'x:uid_var': file.uid,
+      'x:file_id_var': signObj.fileId,
       'key': signObj.dir + file.name,
       'policy': signObj.policy,
       'OSSAccessKeyId': signObj.accessid,
@@ -96,6 +102,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
             file.url = file.response.url;
             file.fileObjectKey = file.response.filename;
             file.bucketName = file.response.bucket;
+            file.fileId = file.response.fileId;
             arr.push(file.response);
           }
           return file;
@@ -116,7 +123,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
   const getSign = async (): Promise<SignBodyServer|undefined> => {
     let path = tempFile ? 'tmp/' : 'img/';
     path += dayjs().format('YYYYMMDD') + '/';
-    return await getUploadSign({path: path, accessType: 'public'}).then(res => {
+    return await getUploadSign({path: path, accessType}).then(res => {
       if (res.code === 200) {
         setActionHost(res.data?.host || '');
         return res.data;

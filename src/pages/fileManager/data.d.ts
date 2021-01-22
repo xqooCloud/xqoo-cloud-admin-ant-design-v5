@@ -12,4 +12,5 @@ export interface SignBodyServer{
   host: string;
   policy: string;
   signature: string;
+  fileId: string;
 }
