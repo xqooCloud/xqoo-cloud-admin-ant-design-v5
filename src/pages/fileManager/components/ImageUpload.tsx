@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {message, Modal, Upload} from "antd";
-import {getUploadSign, removeFileToServer} from "@/pages/fileManager/service";
+import {getUploadSign, removeAliFileToServer} from "@/pages/fileManager/service";
 import {SignBodyServer} from "@/pages/fileManager/data";
 import * as dayjs from 'dayjs';
 
@@ -34,21 +34,23 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
     }
     const maxSize = file.size / 1024 > (singlePicSize || 512);
     if (maxSize) {
-      message.error(`单张图片大小不得超过 ${singlePicSize} Kb`);
+      message.error(`单张图片大小不得超过 ${singlePicSize || 512} Kb`);
       return false;
     }
     return true;
   };
 
   const onRemove = (file: any) => {
-    removeFileToServer({ bucketName: file.bucketName, fileKey: file.fileObjectKey, fileId: file.fileId }).then(res => {
-      if(res.code === 200){
-      }else{
-        console.warn('file remove error,please confirm')
-      }
-    }).catch(e => {
-      console.error('file remove error,please confirm');
-    });
+    if(file.response){
+      removeAliFileToServer({ bucketName: file.bucketName, fileKey: file.fileObjectKey, fileId: file.fileId }).then(res => {
+        if(res.code === 200){
+        }else{
+          console.warn('file remove error,please confirm')
+        }
+      }).catch(e => {
+        console.error('file remove error,please confirm');
+      });
+    }
     const newFileList: any[] = [];
     const backFileList: any[] = [];
     fileList.forEach((item, tmpIndex) => {
