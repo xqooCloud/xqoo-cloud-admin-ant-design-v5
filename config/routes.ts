@@ -80,6 +80,7 @@
   { path: '/fileManager', component: './Welcome', access: 'routeFilter' }, // 文件管理
   { path: '/fileManager/fileConfig', component: './fileManager/FileConfig', access: 'routeFilter' }, // 文件模块参数管理
   { path: '/fileManager/aliyun', component: './fileManager/AliyunOss', access: 'routeFilter' }, // 阿里云相关管理
+  { path: '/fileManager/fileRecord', component: './fileManager/FileRecord', access: 'routeFilter' }, // 已上传文件管理
 
   {
     component: './404',
