@@ -76,8 +76,7 @@ const UpdateGatewayRoute: React.FC<{}> = () => {
   const initFormInfo = (info: GatewayRouteEntity|undefined) => {
     if(!info){
       info = new GatewayRouteClass(undefined).initRouteInfo();
-    }
-    if(info){
+    }else{
       try{
         setLocalPredicateConfig(JSON.parse(info?.predicates as string));
         setLocalFilterConfig(JSON.parse(info?.filters as string));

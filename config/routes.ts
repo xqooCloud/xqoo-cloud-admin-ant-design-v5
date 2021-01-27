@@ -75,13 +75,18 @@
   { path: '/affiliated/agreement', component: './affiliated/agreement', access: 'routeFilter' }, // 协议配置
   { path: '/affiliated/bannerGroup', component: './affiliated/banner/group', access: 'routeFilter' }, // 轮播图分组
   { path: '/affiliated/bannerDetail', component: './affiliated/banner/detail', access: 'routeFilter' }, // 轮播图分组
-   { path: '/affiliated/FooterNav', component: './affiliated/FooterNav', access: 'routeFilter' }, // 脚页配置
-   // { path: '/affiliated/FooterNav/FooterNavInfo', component: './affiliated/FooterNavInfo', access: 'routeFilter' }, // 脚页分组详情配置
+  { path: '/affiliated/FooterNav', component: './affiliated/FooterNav', access: 'routeFilter' }, // 脚页配置
+  { path: '/affiliated/FooterNav/FooterNavInfo', component: './affiliated/FooterNavInfo', access: 'routeFilter' }, // 脚页分组详情配置
 
   { path: '/fileManager', component: './Welcome', access: 'routeFilter' }, // 文件管理
   { path: '/fileManager/fileConfig', component: './fileManager/FileConfig', access: 'routeFilter' }, // 文件模块参数管理
   { path: '/fileManager/aliyun', component: './fileManager/AliyunOss', access: 'routeFilter' }, // 阿里云相关管理
   { path: '/fileManager/fileRecord', component: './fileManager/FileRecord', access: 'routeFilter' }, // 已上传文件管理
+
+  { path: '/device', component: './Welcome', access: 'routeFilter' }, // 设备管理
+  { path: '/device/deviceInfo', component: './device/DeviceInfo', access: 'routeFilter' }, // 屏幕管理
+  { path: '/device/deviceInfo/updateDeviceInfo', component: './device/DeviceInfo/components/UpdateDeviceInfo', access: 'routeFilter' }, // 编辑屏幕信息
+
 
   {
     component: './404',

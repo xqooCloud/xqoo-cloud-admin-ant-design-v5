@@ -11,7 +11,7 @@ const AliyunOss: React.FC<{}> = () => {
   return (
     <PageContainer fixedHeader>
       <ImageUpload maxImageNumber={2} uploadedCallback={uploaded} accessType="public"/>
-      <img src="https://xqoo-public.oss-cn-shanghai.aliyuncs.com/img/20210122/school-project.jpg" />
+      <img src="https://xqoo-public.oss-cn-shanghai.aliyuncs.com/tmp1d/20210126190741_1_qr.jpg" />
     </PageContainer>
   );
 };

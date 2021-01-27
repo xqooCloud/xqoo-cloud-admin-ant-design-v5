@@ -2,7 +2,8 @@ import * as CryptoJS from 'crypto-js';
 import {xqooConstants} from "../../../config/xqooConstants";
 const key = CryptoJS.enc.Utf8.parse(xqooConstants.aesKey);
 const data = {
-  mode: CryptoJS.mode.ECB,
+  iv: key,
+  mode: CryptoJS.mode.CBC,
   padding: CryptoJS.pad.Pkcs7
 };
 
