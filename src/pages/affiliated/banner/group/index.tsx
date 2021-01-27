@@ -198,7 +198,7 @@ const BannerGroup: React.FC<{}> = () => {
       <div className={styles.tableDiv}>
         <Button type="primary" loading={loading} icon={<FileAddOutlined/>} onClick={() => {
           updateBannerGroup()
-        }}>新增协议</Button>
+        }}>新增分组</Button>
         <Divider/>
         {
           hasError ?

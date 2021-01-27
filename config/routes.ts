@@ -74,6 +74,7 @@
 
   { path: '/affiliated/agreement', component: './affiliated/agreement', access: 'routeFilter' }, // 协议配置
   { path: '/affiliated/bannerGroup', component: './affiliated/banner/group', access: 'routeFilter' }, // 轮播图分组
+  { path: '/affiliated/bannerDetail', component: './affiliated/banner/detail', access: 'routeFilter' }, // 轮播图分组
    { path: '/affiliated/FooterNav', component: './affiliated/FooterNav', access: 'routeFilter' }, // 脚页配置
    // { path: '/affiliated/FooterNav/FooterNavInfo', component: './affiliated/FooterNavInfo', access: 'routeFilter' }, // 脚页分组详情配置
 
