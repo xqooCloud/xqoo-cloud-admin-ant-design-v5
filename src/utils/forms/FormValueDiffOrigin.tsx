@@ -5,7 +5,9 @@ const FormValueDiffOrigin = (changedValues: any, allValues: any, T: any): boolea
   return _isEqualWith(T, allValues, () => {
     let same: boolean = true;
     _forIn(allValues, (value, key) => {
-      if(String(T[key]) !== String(value)){
+      const originVal = T[key] instanceof Object ? JSON.stringify(T[key]) : String(T[key]);
+      const newVal = value instanceof Object ? JSON.stringify(value) : String(value);
+      if(originVal !== newVal){
         same = false;
         return false;
       }
