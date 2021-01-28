@@ -46,7 +46,6 @@ const GatewayRoute: React.FC<{}> = () => {
   const [queryParams, setQueryParams] = useState<GatewayRouteQuery>({page: 1, pageSize: 20});
 
   const jumpToUpdatePage = (id: string) => {
-    console.log(id)
     history.push(`/devOps/gatewayRoute/updateGatewayRoute?routeId=${id}`);
   };
 
