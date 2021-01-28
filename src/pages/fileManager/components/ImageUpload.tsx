@@ -9,12 +9,13 @@ export interface ImageUploadProps {
   singlePicSize?: number;
   tempFile?: boolean;
   cacheExpire?: number;
-  accessType: 'public'|'protected',
+  accessType: 'public' | 'protected',
+  initImageArr?: any[];
   uploadedCallback: (fileArr: any[]) => void;
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = (props) => {
-  const {maxImageNumber, singlePicSize, tempFile, cacheExpire, accessType, uploadedCallback} = props;
+  const {maxImageNumber, singlePicSize, tempFile, cacheExpire, accessType, uploadedCallback, initImageArr} = props;
   const [fileList, setFileList] = useState<any[]>([]);
   const [callbackArr, setCallbackArr] = useState<any[]>([]);
   const [actionHost, setActionHost] = useState<string>('');
@@ -25,6 +26,12 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
   useEffect(() => {
     uploadedCallback(callbackArr);
   }, [callbackArr]);
+
+  useEffect(() => {
+    if (initImageArr && initImageArr.length > 0) {
+      setFileList(initImageArr);
+    }
+  }, [initImageArr]);
 
   const judgeIllegal = (file: any): boolean => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -41,10 +48,14 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
   };
 
   const onRemove = (file: any) => {
-    if(file.response){
-      removeAliFileToServer({ bucketName: file.bucketName, fileKey: file.fileObjectKey, fileId: file.fileId }).then(res => {
-        if(res.code === 200){
-        }else{
+    if (file.response) {
+      removeAliFileToServer({
+        bucketName: file.bucketName,
+        fileKey: file.fileObjectKey,
+        fileId: file.fileId
+      }).then(res => {
+        if (res.code === 200) {
+        } else {
           console.warn('file remove error,please confirm')
         }
       }).catch(e => {
@@ -54,7 +65,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
     const newFileList: any[] = [];
     const backFileList: any[] = [];
     fileList.forEach((item, tmpIndex) => {
-      if(file.uid !== item.uid){
+      if (file.uid !== item.uid) {
         newFileList.push(item);
         backFileList.push(item.response);
       }
@@ -94,7 +105,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
     setFileList([...fileList, file]);
     return file;
   };
-  const onChange = ({ file, fileList }: any) => {
+  const onChange = ({file, fileList}: any) => {
     if (file.status) {
       if (file.status === 'done') {
         const arr: any[] = [];
@@ -122,7 +133,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
       }
     }
   };
-  const getSign = async (): Promise<SignBodyServer|undefined> => {
+  const getSign = async (): Promise<SignBodyServer | undefined> => {
     let path = tempFile ? 'tmp/' : 'img/';
     path += dayjs().format('YYYYMMDD') + '/';
     return await getUploadSign({path: path, accessType}).then(res => {
@@ -169,7 +180,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
           setPreviewVisible(false);
         }}
       >
-        <img alt="example" style={{ width: '100%', objectFit: 'contain' }} src={previewImage} />
+        <img alt="example" style={{width: '100%', objectFit: 'contain'}} src={previewImage}/>
       </Modal>
     </>
   );

@@ -1,39 +1,43 @@
 import {useModel} from "@@/plugin-model/useModel";
 import React, {ReactNode, useEffect, useState} from "react";
 import {ColumnsType} from "antd/es/table";
-import {Alert, Button, Col, Divider, Form,  Modal, Result, Row, Select, Space, Table, Tooltip} from "antd";
+import {Alert, Badge, Button, Col, Divider, Form, Modal, Result, Row, Select, Space, Table, Tooltip} from "antd";
 import {PageContainer} from "@ant-design/pro-layout";
 import {assign as _assign} from "lodash";
 import {BannerDetailInfo, QueryBannerDetailInfo} from "@/pages/affiliated/banner/detail/data";
 import {FileAddOutlined} from "@ant-design/icons";
 import styles from "./index.less";
 import BannerDetailInfoDetail from "@/pages/affiliated/banner/detail/components/BannerDetailInfoDetail";
+import {Image} from 'antd';
 
 const formItemLayout = {
   labelCol: {
-    xs: { span: 24 },
-    sm: { span: 8 },
-    md: { span: 6 },
+    xs: {span: 24},
+    sm: {span: 8},
+    md: {span: 6},
   },
   wrapperCol: {
-    xs: { span: 10 },
-    sm: { span: 10 },
-    md: { span: 13 },
+    xs: {span: 10},
+    sm: {span: 10},
+    md: {span: 13},
   },
 };
 
 const BannerDetail: React.FC<{}> = () => {
-  const { bannerDetailInfoList, bannerGroup, totalElements,
-    loading, hasError, errorMessage, alertTipsShow, alertTipsMessage, alertTipsType, getGroupListFromServer, getBannerDetailInfoFromServer, deleteBannerDetailInfoToServer, alertTipsHandle} = useModel('affiliated.banner.detail.BannerDetailInfoModel');
+  const {
+    bannerDetailInfoList, bannerGroup, totalElements,
+    loading, hasError, errorMessage, alertTipsShow, alertTipsMessage, alertTipsType, getGroupListFromServer, getBannerDetailInfoFromServer, deleteBannerDetailInfoToServer, alertTipsHandle
+  } = useModel('affiliated.banner.detail.BannerDetailInfoModel');
   const [queryForm] = Form.useForm();
   const [queryParams, setQueryParams] = useState<QueryBannerDetailInfo>({page: 1, pageSize: 20});
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [checkBannerDetailInfo, setcheckBannerDetailInfo] = useState<BannerDetailInfo|undefined>(undefined);
+  const [checkBannerDetailInfo, setcheckBannerDetailInfo] = useState<BannerDetailInfo | undefined>(undefined);
 
   useEffect(() => {
     getBannerDetailInfoFromServer(queryParams);
     getGroupListFromServer();
   }, []);
+
 
   const columns: ColumnsType<BannerDetailInfo> = [
     {
@@ -48,22 +52,50 @@ const BannerDetail: React.FC<{}> = () => {
       dataIndex: 'groupId',
       align: 'center',
       ellipsis: true,
-      render: (groupId: any) => (
-        <Tooltip overlay={undefined} placement="topLeft" title={groupId}>
-          {groupId}
+      render: (groupId: any) => {
+        let groupName = "";
+        for (let i = 0; i < bannerGroup.length; i++) {
+          if (groupId == bannerGroup[i].id) {
+            groupName = bannerGroup[i].groupName;
+            break;
+          }
+        }
+        return <Tooltip overlay={undefined} placement="topLeft" title={groupName}>
+          {groupName}
         </Tooltip>
-      ),
+      }
     },
     {
-      title: '图片地址',
+      title: '是否可用',
+      dataIndex: 'activeCode',
+      align: 'center',
+      ellipsis: true,
+      render: (text, row, index) => {
+        if (!row.activeCode) {
+          return <Badge color='red' text="禁用"/>
+        } else {
+          return <Badge color='green' text="可用"/>
+        }
+      }
+    },
+    {
+      title: '图片预览',
       dataIndex: 'mediaUrl',
       align: 'center',
       ellipsis: true,
-      render: (dataBaseShowName: any) => (
-        <Tooltip overlay={undefined} placement="topLeft" title={dataBaseShowName}>
-          {dataBaseShowName}
-        </Tooltip>
-      ),
+      render: (mediaUrl: any) => {
+        if (mediaUrl) {
+          return <Image.PreviewGroup>
+            <Image
+              width={50}
+              height={50}
+              src={mediaUrl}
+            />
+          </Image.PreviewGroup>
+        } else {
+          return null;
+        }
+      }
     },
     {
       title: '创建时间',
@@ -93,14 +125,30 @@ const BannerDetail: React.FC<{}> = () => {
       align: 'center',
       fixed: 'right',
       width: 180,
-      render: (text, row, index) => (
-        <Space size="small">
-          <a onClick={ () => {updateBannerDetailInfo(row)}}>编辑</a>
-          <a onClick={ async () => {deleteBannerDetailInfo(row.id)}}>删除</a>
-        </Space>
-      ),
+      render: (text, row, index) => {
+        if (row.activeCode) {
+          return <Space size="small">
+            <a onClick={() => {
+              updateBannerDetailInfo(row)
+            }}>编辑</a>
+            <a onClick={async () => {
+              deleteBannerDetailInfo(row.id, row.activeCode)
+            }}>禁用</a>
+          </Space>
+        } else {
+          return <Space size="small">
+            <a onClick={() => {
+              updateBannerDetailInfo(row)
+            }}>编辑</a>
+            <a onClick={async () => {
+              deleteBannerDetailInfo(row.id, row.activeCode)
+            }}>启用</a>
+          </Space>
+        }
+      }
     },
   ];
+
 
   // 查询表单提交
   const onFinish = (values: any) => {
@@ -127,23 +175,30 @@ const BannerDetail: React.FC<{}> = () => {
   };
 
   const updateBannerDetailInfo = (bd?: BannerDetailInfo) => {
-    if(bd){
+    if (bd) {
       setcheckBannerDetailInfo(bd);
-    }else{
+    } else {
       setcheckBannerDetailInfo(undefined);
     }
     setShowModal(true);
   };
 
-  const deleteBannerDetailInfo = async (id: number) => {
+  const deleteBannerDetailInfo = async (id?: number, activeCode?: number) => {
+    let title = "";
+    let idValue = id ? id : 0;
+    if (activeCode && activeCode) {
+      title = "是否禁用数据？";
+    } else {
+      title = "是否启用数据？";
+    }
     Modal.confirm({
       okText: '确认',
       cancelText: '取消',
       title: '确定操作',
-      content: '是否确认删除数据？',
+      content: title,
       onOk: () => {
-        deleteBannerDetailInfoToServer(id).then(res => {
-          if(res){
+        deleteBannerDetailInfoToServer(idValue).then(res => {
+          if (res) {
             getBannerDetailInfoFromServer(_assign(queryParams, queryForm.getFieldsValue()))
           }
         }).catch(e => {
@@ -155,7 +210,7 @@ const BannerDetail: React.FC<{}> = () => {
 
   const closeModal = (result: boolean) => {
     setShowModal(false);
-    if(result){
+    if (result) {
       getBannerDetailInfoFromServer(_assign(queryParams, queryForm.getFieldsValue()))
     }
   };
@@ -173,9 +228,9 @@ const BannerDetail: React.FC<{}> = () => {
             <Col md={5} xs={24}>
               <Form.Item
                 label="轮播图类型"
-                name="dataBaseType">
+                name="groupId">
                 <Select allowClear placeholder="请选择类型">
-                  { bannerGroupGen() }
+                  {bannerGroupGen()}
                 </Select>
               </Form.Item>
             </Col>
@@ -183,10 +238,12 @@ const BannerDetail: React.FC<{}> = () => {
             <Col md={2} xs={8} style={{textAlign: 'left'}}>
               <Space size="large">
                 <Button type='primary' htmlType="submit" loading={loading}>查询</Button>
-                <Button type='default' loading={loading} onClick={() => { queryForm.resetFields()}}>重置</Button>
+                <Button type='default' loading={loading} onClick={() => {
+                  queryForm.resetFields()
+                }}>重置</Button>
               </Space>
             </Col>
-            <Col md={17} xs={0} />
+            <Col md={17} xs={0}/>
           </Row>
         </Form>
       </div>
@@ -197,7 +254,9 @@ const BannerDetail: React.FC<{}> = () => {
             showIcon
             type={alertTipsType}
             closeText={<div
-              onClick={() => {alertTipsHandle('info', '', false)}}>
+              onClick={() => {
+                alertTipsHandle('info', '', false)
+              }}>
               我知道了
             </div>
             }
@@ -205,8 +264,10 @@ const BannerDetail: React.FC<{}> = () => {
         }
       </div>
       <div className={styles.tableDiv}>
-        <Button type="primary" loading={loading} icon={<FileAddOutlined />} onClick={() => {updateBannerDetailInfo()}}>新增轮播图</Button>
-        <Divider />
+        <Button type="primary" loading={loading} icon={<FileAddOutlined/>} onClick={() => {
+          updateBannerDetailInfo()
+        }}>新增轮播图</Button>
+        <Divider/>
         {
           hasError ?
             <Result
@@ -225,18 +286,21 @@ const BannerDetail: React.FC<{}> = () => {
                 total: totalElements,
                 current: queryParams.page,
                 pageSize: queryParams.pageSize,
-                pageSizeOptions: ['20','40'],
+                pageSizeOptions: ['20', '40'],
                 showSizeChanger: true,
                 showQuickJumper: true,
-                showTotal: (total) => {return `总条数${total}条`},
+                showTotal: (total) => {
+                  return `总条数${total}条`
+                },
               }}
               loading={loading}
-              scroll={{ x: 900, scrollToFirstRowOnChange: true }}
+              scroll={{x: 900, scrollToFirstRowOnChange: true}}
               onChange={handleTableChange}
             />
         }
       </div>
-      <BannerDetailInfoDetail bannerDetailInfo={checkBannerDetailInfo} onCloseModal={closeModal} showModal={showModal} maskClosable={false}/>
+      <BannerDetailInfoDetail bannerDetailInfo={checkBannerDetailInfo} onCloseModal={closeModal} showModal={showModal}
+                              maskClosable={false}/>
     </PageContainer>
   );
 };

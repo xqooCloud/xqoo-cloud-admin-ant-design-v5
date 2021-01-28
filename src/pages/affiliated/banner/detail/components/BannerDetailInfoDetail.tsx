@@ -6,6 +6,7 @@ import ValidateMessages from "@/utils/forms/ValidateMessages";
 import {SaveOutlined} from "@ant-design/icons";
 import FormValueDiffOrigin from "@/utils/forms/FormValueDiffOrigin";
 import {assign as _assign} from 'lodash';
+import ImageUpload from "@/pages/fileManager/components/ImageUpload";
 
 
 export interface BannerDetailInfoProps {
@@ -37,21 +38,21 @@ const BannerDetailInfoDetail: React.FC<BannerDetailInfoProps> = (props) => {
   const [updateForm] = Form.useForm();
   const [hasChange, setHasChange] = useState<boolean>(false);
   const [isAdd, setIsAdd] = useState<boolean>(false);
-  const [isShowRedirectValue, setIsShowRedirectValue] = useState<boolean>(false);
-
-  const changeType = (value: any) => {
-    if (value == "METHOD") {
-      setIsShowRedirectValue(true);
-    } else {
-      setIsShowRedirectValue(false);
-    }
-    console.log("=============" + isShowRedirectValue)
-  }
+  const [initImageArr, setInitImageArr] = useState<any[]>([]);
+  const [uploadArr, setUploadArr] = useState<any[]>([]);
 
   const initFormInfoValue = () => {
     if (bannerDetailInfo) {
       updateForm.setFieldsValue(bannerDetailInfo);
-      setIsAdd(false);
+      const newFileList: any[] = [];
+      let obj = {
+        id: bannerDetailInfo.id,
+        url: bannerDetailInfo.mediaUrl,
+        status: 'done',
+        percent: 100
+      }
+      newFileList.push(obj);
+      setInitImageArr(newFileList);
     } else {
       updateForm.resetFields();
       setIsAdd(true);
@@ -94,10 +95,14 @@ const BannerDetailInfoDetail: React.FC<BannerDetailInfoProps> = (props) => {
       title: '确认信息',
       content: '是否确认提交数据？',
       onOk: async () => {
+        if (uploadArr.length > 0) {
+            values.mediaUrl=uploadArr[0].url;
+        }
         const obj: BannerDetailInfo = _assign({}, bannerDetailInfo, values);
         const success = await updateBannerDetailInfoToServer(obj);
         if (success) {
           updateForm.resetFields();
+
           onCloseModal(true);
         } else {
           onCloseModal(false);
@@ -115,7 +120,12 @@ const BannerDetailInfoDetail: React.FC<BannerDetailInfoProps> = (props) => {
     })
     return arr;
   };
-
+  const uploaded = (arr: any[]) => {
+    if (arr.length > 0) {
+      setUploadArr(arr);
+      setHasChange(true);
+    }
+  };
 
   return (
     <Modal
@@ -154,8 +164,8 @@ const BannerDetailInfoDetail: React.FC<BannerDetailInfoProps> = (props) => {
           </Select>
         </Form.Item>
         <Form.Item
-          name="redirectType"
-          label='触发类型'
+          name="groupId"
+          label='分组类型'
           hasFeedback
           wrapperCol={{span: 7}}
           tooltip={<Tooltip title=''>
@@ -165,43 +175,48 @@ const BannerDetailInfoDetail: React.FC<BannerDetailInfoProps> = (props) => {
             {required: true}
           ]}
         >
-          <Select onChange={changeType}>
-            <Select.Option value="NONE">不处理</Select.Option>
-            <Select.Option value="URL">打开链接</Select.Option>
-            <Select.Option value="METHOD">调用指定前端方法</Select.Option>
+          <Select allowClear placeholder="请选择类型">
+            {bannerGroupTypeGen()}
           </Select>
         </Form.Item>
-        {
-          isShowRedirectValue ?
-            <Form.Item
-              name="redirectValue"
-              label='重定向值'
-              hasFeedback
-              wrapperCol={{span: 10}}
-              tooltip={<Tooltip title=''>
-                点击事件重定向的值，最长512字符
-              </Tooltip>}
-              rules={[
-                {required: true, min: 2, max: 512}]}
-            >
-              <Input/>
-            </Form.Item>
-            : null
-        }
         <Form.Item
-          name="mediaUrl"
-          label='资源链接'
+          label='上传图片'
+          hasFeedback
+          wrapperCol={{span: 7}}
+          tooltip={<Tooltip title=''>
+            选择一个数据源类型
+          </Tooltip>}
+        >
+          <ImageUpload maxImageNumber={1}
+                       initImageArr={initImageArr}
+                       uploadedCallback={uploaded} accessType="public"/>
+        </Form.Item>
+        <Form.Item
+          name="redirectValue"
+          label='重定向值'
           hasFeedback
           wrapperCol={{span: 10}}
           tooltip={<Tooltip title=''>
-            资源链接
+            点击事件重定向的值，最长512字符
           </Tooltip>}
           rules={[
-            {required: true, min: 2, max: 255}]}
+            {required: true, min: 2, max: 512}]}
         >
           <Input/>
         </Form.Item>
-
+        {/*<Form.Item*/}
+        {/*  name="mediaUrl"*/}
+        {/*  label='资源链接'*/}
+        {/*  hasFeedback*/}
+        {/*  wrapperCol={{span: 10}}*/}
+        {/*  tooltip={<Tooltip title=''>*/}
+        {/*    资源链接*/}
+        {/*  </Tooltip>}*/}
+        {/*  rules={[*/}
+        {/*    {required: true, min: 2, max: 255}]}*/}
+        {/*>*/}
+        {/*  <Input/>*/}
+        {/*</Form.Item>*/}
         <Form.Item
           name="bannerTips"
           label='图片提示'
