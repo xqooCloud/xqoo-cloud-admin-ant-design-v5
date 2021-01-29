@@ -316,7 +316,7 @@ const MenuDetailInfoForm: React.FC<MenuDetailInfoFormProps> = (props) => {
     }).catch(e => {
       console.warn('表单校验不通过', e)
       setTipsContentState(`表单校验有误：校验不通过无法提交`);
-    })
+    });
     console.warn('Failed Submit Form:', errorInfo);
   };
 

@@ -166,7 +166,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
         onRemove={onRemove}
         onChange={onChange}
         fileList={fileList}
-        listType={"picture-card"}
+        listType="picture-card"
         data={extraData}
       >
         {fileList.length < maxImageNumber && '+ 选择文件图片'}
