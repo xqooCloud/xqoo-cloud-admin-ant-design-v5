@@ -74,7 +74,9 @@ import {
   FieldStringOutlined,
   PaperClipOutlined,
   CopyrightOutlined,
-  CloudServerOutlined
+  CloudServerOutlined,
+  DesktopOutlined,
+  ShoppingCartOutlined
 } from "@ant-design/icons";
 
 export const IconModule = {
@@ -193,7 +195,9 @@ export const IconModule = {
           'FieldStringOutlined',
           'PaperClipOutlined',
           'CopyrightOutlined',
-          'CloudServerOutlined'
+          'CloudServerOutlined',
+          'DesktopOutlined',
+          'ShoppingCartOutlined',
         ]
       }
     ],
@@ -336,6 +340,8 @@ export const CustomIconMap = {
   PaperClipOutlined: <PaperClipOutlined/>,
   CloudServerOutlined: <CloudServerOutlined />,
   CopyrightOutlined: <CopyrightOutlined/>,
+  DesktopOutlined: <DesktopOutlined />,
+  ShoppingCartOutlined: <ShoppingCartOutlined />,
 
   PlusSquareFilled: <PlusSquareFilled/>,
 

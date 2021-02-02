@@ -13,16 +13,20 @@ import {
   Divider,
   Form,
   Input,
-  InputNumber, message,
+  InputNumber,
+  message,
   Modal,
+  Popover,
   Result,
   Row,
   Select,
   Space,
-  Tooltip, Upload
+  Tooltip,
+  Upload
 } from "antd";
 import QueueAnim from "rc-queue-anim";
 import {
+  EnvironmentOutlined,
   MinusCircleOutlined,
   PlusOutlined,
   ReloadOutlined,
@@ -35,6 +39,8 @@ import {SignBodyServer} from "@/pages/fileManager/data";
 import {getUploadSign, removeAliFileToServer} from "@/pages/fileManager/service";
 import {assign as _assign, filter as _filter} from "lodash";
 import styles from "@/pages/device/DeviceInfo/DeviceInfo.less";
+import AmapComponments from "@/components/amap/AmapComponments";
+import {MapData} from "@/services/PublicInterface";
 
 const formItemLayout = {
   labelCol: {
@@ -332,6 +338,34 @@ const UpdateDeviceInfo: React.FC<{}> = () => {
     return file;
   };
 
+  const getMapData = (mapData: MapData) => {
+    const address = mapData.province
+      + '|' + mapData.city + '|'
+      + mapData.district + '|'
+      + mapData.township + (mapData.street ? ('|' + mapData.street) : '');
+    deviceInfoForm.setFieldsValue({
+      screenPositionLong: mapData.lng,
+      screenPositionLati: mapData.lat,
+      screenAddress: address
+    });
+    if(FormValueDiffOrigin(null, deviceInfoForm.getFieldsValue(), localDeviceDetailInfo)){
+      setHasChange(false);
+    }else{
+      setHasChange(true);
+    }
+  };
+
+  const mapContent = (
+    <div key="mapDiv" style={{ width: '800px', height: '400px'}}>
+      <AmapComponments
+        lng={deviceInfoForm.getFieldValue('screenPositionLong') || 0}
+        lat={deviceInfoForm.getFieldValue('screenPositionLati') || 0}
+        backData={getMapData}
+        zoom={15}
+      />
+    </div>
+  );
+
   return (
     <PageContainer fixedHeader>
       <a href="#" id="deviceTipsTop" />
@@ -449,28 +483,6 @@ const UpdateDeviceInfo: React.FC<{}> = () => {
                         >
                           <Input />
                         </Form.Item>
-                        <Form.Item
-                          name="screenAddress"
-                          label='屏幕地址'
-                          hasFeedback
-                          tooltip={<Tooltip title=''>
-                            线下实体屏幕所存放的位置
-                          </Tooltip>}
-                          rules={[
-                            { required: true, min: 2, max: 32},
-                            ({ getFieldValue }) => ({
-                              validator(rule, value) {
-                                const pattern = new RegExp("[$%^&+=\\[\\]~！￥…*（）—{}【】‘；：”“’。，、？]")
-                                if (!value || !pattern.test(value)) {
-                                  return Promise.resolve();
-                                }
-                                return Promise.reject('不可输入特殊字符');
-                              },
-                            })
-                          ]}
-                        >
-                          <Input />
-                        </Form.Item>
 
                         <Form.Item
                           name="screenInstaller"
@@ -555,6 +567,41 @@ const UpdateDeviceInfo: React.FC<{}> = () => {
                             }
                           </Select>
                         </Form.Item>
+                        <Form.Item required label="屏幕地址">
+                          <Row>
+                            <Col span={20}>
+                              <Form.Item
+                                name="screenAddress"
+                                hasFeedback
+                                tooltip={<Tooltip title=''>
+                                  线下实体屏幕所存放的位置
+                                </Tooltip>}
+                                noStyle
+                                rules={[
+                                  { required: true, min: 2, max: 32},
+                                  ({ getFieldValue }) => ({
+                                    validator(rule, value) {
+                                      const pattern = new RegExp("[$%^&+=\\[\\]~！￥…*（）—{}【】‘；：”“’。，、？]")
+                                      if (!value || !pattern.test(value)) {
+                                        return Promise.resolve();
+                                      }
+                                      return Promise.reject('不可输入特殊字符');
+                                    },
+                                  })
+                                ]}
+                              >
+                                <Input readOnly disabled />
+                              </Form.Item>
+                            </Col>
+                            <Col span={4}>
+                              <div>
+                                <Popover destroyTooltipOnHide={true} placement="right" title="选择地址" content={mapContent} trigger="click">
+                                  <EnvironmentOutlined style={{ color: 'red', fontSize: '30px'}} />
+                                </Popover>
+                              </div>
+                            </Col>
+                          </Row>
+                        </Form.Item>
 
                         <Form.Item
                           label="经度坐标"
@@ -568,6 +615,8 @@ const UpdateDeviceInfo: React.FC<{}> = () => {
                           ]}
                         >
                           <InputNumber
+                            readOnly
+                            disabled
                             formatter={(value: any) => `${value}°`}
                             parser={(value: any) => value.replace('°', '')}
                             style={{ width: '50%' }}
@@ -589,6 +638,8 @@ const UpdateDeviceInfo: React.FC<{}> = () => {
                           ]}
                         >
                           <InputNumber
+                            readOnly
+                            disabled
                             formatter={(value: any) => `${value}°`}
                             parser={(value: any) => value.replace('°', '')}
                             style={{ width: '50%' }}

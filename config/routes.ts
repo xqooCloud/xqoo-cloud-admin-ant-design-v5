@@ -87,6 +87,9 @@
   { path: '/device/deviceInfo', component: './device/DeviceInfo', access: 'routeFilter' }, // 屏幕管理
   { path: '/device/deviceInfo/updateDeviceInfo', component: './device/DeviceInfo/components/UpdateDeviceInfo', access: 'routeFilter' }, // 编辑屏幕信息
 
+  { path: '/saleCenter', component: './Welcome', access: 'routeFilter' }, // 销售中心
+  { path: '/saleCenter/saleGoods', component: './saleCenter/SaleGoods', access: 'routeFilter' }, // 销售产品柜
+
 
   {
     component: './404',

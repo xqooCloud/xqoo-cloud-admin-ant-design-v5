@@ -240,7 +240,7 @@ const DeviceInfo: React.FC<{}> = () => {
       ellipsis: true,
       width: 100,
       render: (screenSize: any) => {
-        return <span>{screenSize} 存</span>
+        return <span>{screenSize} 寸</span>
       }
     },
     {
