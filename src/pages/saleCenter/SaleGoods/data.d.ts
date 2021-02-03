@@ -23,3 +23,29 @@ export interface QuerySaleGoods extends PageRequest{
   status?: number;
   saleTitle?: string;
 }
+
+export interface GoodsDetailVo extends SaleGoodsInfoEntity{
+  pictureList?: GoodsPicture[];
+  propertiesList?: ScreenPropertiesVo[];
+  screenSize?: number;
+  screenName?: string;
+  screenAddress?: string;
+  favoriteCount?: number;
+}
+
+export interface GoodsPicture {
+  id: number;
+  parentGoodsId?: string;
+  fileName?: string;
+  filePath?: string;
+  fileId?: string;
+  sortNo?: number;
+}
+
+export interface ScreenPropertiesVo{
+  id: number;
+  parentId?: string;
+  propertiesLabel?: string;
+  propertiesValue?: string;
+  sortNo?: number;
+}

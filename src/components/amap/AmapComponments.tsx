@@ -30,7 +30,9 @@ const AmapComponments: React.FC<AmapComponmentsProps> = (props) => {
     },
     click: (e: any) => {
       let geocoder;
+      // @ts-ignore
       window.AMap.plugin(["AMap.Geocoder"],function(){
+        // @ts-ignore
         geocoder = new AMap.Geocoder({
           radius:1000, //以已知坐标为中心点，radius为半径，返回范围内兴趣点和道路信息
           extensions: "all"//返回地址描述以及附近兴趣点和道路信息，默认"base"

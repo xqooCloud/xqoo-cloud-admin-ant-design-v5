@@ -21,6 +21,10 @@ export async function updateDeviceInfo(data: DeviceDetailEntity) {
   });
 }
 
+export async function getDeviceInfoForPublic(deviceId: string) {
+  return request<ResponseData<any>>(`/api/device/deviceInfoHandle/getDeviceInfoForPublic?id=${deviceId}`);
+}
+
 export async function getRecordByPrimaryKey(deviceId: string) {
   return request<ResponseData<DeviceDetailEntity>>(`/api/device/deviceInfoHandle/getRecordByPrimaryKey?id=${deviceId}`);
 }

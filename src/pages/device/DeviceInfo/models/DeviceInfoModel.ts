@@ -5,7 +5,7 @@ import {
   deviceToDeploy,
   deviceToFinish,
   deviceToRemove,
-  deviceToStop,
+  deviceToStop, getDeviceInfoForPublic,
   getDeviceInfoList
 } from "@/pages/device/DeviceInfo/service";
 
@@ -138,6 +138,24 @@ export default function DeviceInfoModel() {
     });
   }, []);
 
+  // deviceToStop
+  const getDeviceInfoForPublicFromServer = useCallback(async (deviceId: string): Promise<any> => {
+    setLoading(true);
+    return await getDeviceInfoForPublic(deviceId).then(res => {
+      setLoading(false);
+      if(res.code === 200){
+        setHasError(false);
+        return res.data;
+      }
+      alertTipsHandle('warning', res.message, true, 3000);
+      return undefined;
+    }).catch(e => {
+      setLoading(false);
+      alertTipsHandle('error', '获取设备详细信息出错，请稍后再试', true);
+      return undefined;
+    });
+  }, []);
+
 
   // 显示处理提示信息
   const alertTipsHandle = useCallback((type: 'info'|'warning'|'success'|'error'|undefined, message: string, show: boolean, autoClose?: number) => {
@@ -170,6 +188,7 @@ export default function DeviceInfoModel() {
     deviceToFinishToServer,
     deviceToRemoveToServer,
     deviceToStopToServer,
+    getDeviceInfoForPublicFromServer,
     alertTipsHandle
   }
 }

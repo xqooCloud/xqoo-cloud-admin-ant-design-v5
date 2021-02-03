@@ -32,6 +32,7 @@ import {assign as _assign} from "lodash";
 import QueueAnim from "rc-queue-anim";
 import AmapComponments from "@/components/amap/AmapComponments";
 import styles from "@/pages/device/DeviceInfo/DeviceInfo.less";
+import {history} from "@@/core/history";
 
 const formItemLayout = {
   labelCol: {
@@ -190,6 +191,10 @@ const SaleGoods: React.FC<{}> = () => {
     </div>;
   };
 
+  const jumpToUpdatePage = (id: string) => {
+    history.push(`/saleCenter/updateSaleInfo?goodsId=${id}`);
+  };
+
   const columns: ColumnsType<SaleGoodsInfoEntity> = [
     {
       title: '商品id',
@@ -296,7 +301,7 @@ const SaleGoods: React.FC<{}> = () => {
         {
           row.status !== 4 ?
             <Space size="small">
-              <Button type="link" disabled={row.status !== 0} onClick={() => { }}>编辑</Button>
+              <Button type="link" disabled={row.status !== 0} onClick={() => { jumpToUpdatePage(row.goodsId); }}>编辑</Button>
               <Dropdown overlay={generatorDropMenu(row)} trigger={['click']}>
                 <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
                   更多...<DownOutlined />
@@ -431,7 +436,7 @@ const SaleGoods: React.FC<{}> = () => {
       <div className={styles.tableDiv}>
         <div>
           <Space size="large">
-            <Button type="primary" loading={loading} icon={<PlusOutlined />} onClick={() => { }}>新增商品</Button>
+            <Button type="primary" loading={loading} icon={<PlusOutlined />} onClick={() => { jumpToUpdatePage('') }}>新增商品</Button>
           </Space>
         </div>
         <Divider />

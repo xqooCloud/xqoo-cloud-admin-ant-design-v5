@@ -1,6 +1,6 @@
 import {request} from "@@/plugin-request/request";
 import {PageResponse, ResponseData} from "@/services/PublicInterface";
-import {QuerySaleGoods, SaleGoodsInfoEntity} from "@/pages/saleCenter/SaleGoods/data";
+import {GoodsDetailVo, QuerySaleGoods, SaleGoodsInfoEntity} from "@/pages/saleCenter/SaleGoods/data";
 
 
 export async function saleInfoPageGetList(data: QuerySaleGoods) {
@@ -34,4 +34,15 @@ export async function undercarriageGoods(data: string[]) {
     method: 'POST',
     data
   });
+}
+
+export async function updateSaleInfo(data: GoodsDetailVo) {
+  return request<ResponseData<string>>(`/api/saleCenter/saleGoodsInfoHandle/updateSaleInfo`, {
+    method: 'POST',
+    data
+  });
+}
+
+export async function getSaleInfoDetail(goodsId: string){
+  return request<ResponseData<GoodsDetailVo>>(`/api/saleCenter/saleGoodsInfoHandle/getSaleInfoDetail?goodsId=${goodsId}`);
 }

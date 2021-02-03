@@ -89,6 +89,7 @@
 
   { path: '/saleCenter', component: './Welcome', access: 'routeFilter' }, // 销售中心
   { path: '/saleCenter/saleGoods', component: './saleCenter/SaleGoods', access: 'routeFilter' }, // 销售产品柜
+  { path: '/saleCenter/updateSaleInfo', component: './saleCenter/SaleGoods/components/UpdateSaleInfo', access: 'routeFilter' }, // 销售产品柜
 
 
   {
