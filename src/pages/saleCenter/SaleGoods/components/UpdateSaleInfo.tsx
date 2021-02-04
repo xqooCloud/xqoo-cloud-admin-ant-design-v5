@@ -330,8 +330,9 @@ const UpdateSaleInfo:React.FC<{}> = () => {
                             }
                             <Col md={12} xs={24}>
                               <Descriptions title="屏幕信息">
-                                <Descriptions.Item span={2} label="屏幕名字">{localDetailInfo?.screenName}</Descriptions.Item>
+                                <Descriptions.Item label="屏幕名字">{localDetailInfo?.screenName}</Descriptions.Item>
                                 <Descriptions.Item label="屏幕尺寸">{localDetailInfo?.screenSize} 寸</Descriptions.Item>
+                                <Descriptions.Item label="屏幕最大资源承载">{localDetailInfo?.screenMaxSourceCount}</Descriptions.Item>
                                 <Descriptions.Item span={3} label="屏幕所处地址">{localDetailInfo?.screenAddress}</Descriptions.Item>
                                 <Descriptions.Item span={3} label="屏幕参数">
                                   <Table

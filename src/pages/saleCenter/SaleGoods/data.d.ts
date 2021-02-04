@@ -31,6 +31,7 @@ export interface GoodsDetailVo extends SaleGoodsInfoEntity{
   screenName?: string;
   screenAddress?: string;
   favoriteCount?: number;
+  screenMaxSourceCount?: number;
 }
 
 export interface GoodsPicture {

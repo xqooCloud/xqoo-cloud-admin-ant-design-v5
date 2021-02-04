@@ -103,6 +103,7 @@ const UpdateDeviceInfo: React.FC<{}> = () => {
     if(!info){
       info = new DeviceInfoDetailClass(undefined).initDeviceInfo();
     }else{
+      info.screenMaxSourceCount = screenConfig?.screenMaxSourceCount || 20
       deviceInfoForm.setFieldsValue(info);
       setPicFileList(info.pictureList);
       setHasChange(false);
@@ -172,6 +173,7 @@ const UpdateDeviceInfo: React.FC<{}> = () => {
       title: '确认信息',
       content: '确定提交信息？',
       onOk: async () => {
+        setTipsShowState(false);
         const success = await updateDeviceInfoToServer(_assign({}, values));
         if(success){
           setHasChange(false);
@@ -547,6 +549,25 @@ const UpdateDeviceInfo: React.FC<{}> = () => {
                             max={2000}
                             min={1}
                             precision={1}
+                          />
+                        </Form.Item>
+
+                        <Form.Item
+                          label="资源数"
+                          name="screenMaxSourceCount"
+                          tooltip={<Tooltip title=''>
+                            当前设备所能承载的资源数，超过之后将不可购买和添加任务
+                          </Tooltip>}
+                          rules={[
+                            { required: true },
+                            { type: 'number', min: 0, max: 2000 }
+                          ]}
+                        >
+                          <InputNumber
+                            style={{ width: '50%' }}
+                            max={2000}
+                            min={1}
+                            precision={0}
                           />
                         </Form.Item>
 

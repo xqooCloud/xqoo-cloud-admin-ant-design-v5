@@ -86,6 +86,20 @@ const CheckScreenInfo: React.FC<CheckScreenInfoProps> = (props) => {
       }
     },
     {
+      title: '是否关联商品',
+      dataIndex: 'hasSaleInfo',
+      align: 'center',
+      ellipsis: true,
+      width: 140,
+      render: (text: any) => {
+        if(text) {
+          return <Badge color='blue' text="已关联商品" />
+        }else{
+          return <Badge color='red' text="未关联商品" />
+        }
+      }
+    },
+    {
       title: '屏幕所在经度',
       dataIndex: 'screenPositionLong',
       align: 'center',

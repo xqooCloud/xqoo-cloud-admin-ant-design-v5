@@ -5,9 +5,11 @@ export interface DeviceInfoEntity{
   id: string;
   delFlag: number;
   screenStatus?: number;
+  hasSaleInfo?: boolean;
   screenPositionLong?: number;
   screenPositionLati?: number;
   screenSize?: number;
+  screenMaxSourceCount?: number;
   screenName?: string;
   screenAddress?: string;
   screenLabel?: string[];
@@ -31,6 +33,7 @@ export interface DeviceConfigProperties{
   maxPropertiesCount: number;
   maxImageCount: number;
   maxImageSize: number;
+  screenMaxSourceCount: number;
   labelList: {value: string, key: string}[];
 }
 
